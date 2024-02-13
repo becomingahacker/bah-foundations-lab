@@ -1,0 +1,15 @@
+#
+# This file is part of Becoming a Hacker Foundations
+# Copyright (c) 2024, Cisco Systems, Inc.
+# All rights reserved.
+#
+
+#
+# This is the configuration file for the Foundations lab environment.
+#
+
+# Becoming a Hacker Load Balancer FQDN
+lb_fqdn: becomingahacker.com
+# Route53 zone name
+domain_name: becomingahacker.com
+

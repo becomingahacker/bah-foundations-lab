@@ -1,4 +1,4 @@
 # bah-lab-foundations
 
-Becoming a Hacker Lab Foundations running on Cisco Modeling Labs
+Becoming a Hacker Foundations Lab running on Cisco Modeling Labs
 

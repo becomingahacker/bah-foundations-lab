@@ -16,7 +16,8 @@ resource "cml2_lab" "foundations_lab" {
     <hr>
     <br>
     <ul>
-    <h2><li><a href="../training/" target="_blank">Lab Modules</a></h2> (Hold down Command or Control and click to open in a new tab)
+    <h2><li><a href="../training/" target="_blank">Lab Modules</a></h2>
+    Hold down Command or Control and click to open in a new tab
     </ul>
     </div>
   EOT

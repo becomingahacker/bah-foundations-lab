@@ -1,0 +1,27 @@
+hostname iosv-r2
+no service config
+ip domain name ${domain_name}
+ip name-server ${v4_name_server}
+ip name-server ${v6_name_server}
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+interface GigabitEthernet0/0
+  description iosv-r1 Gi0/0
+  ip address ${format("%s %s", cidrhost(l0_prefix, 2), cidrnetmask(l0_prefix))} 
+  ip nat inside
+interface GigabitEthernet0/1
+  description iosv-r1 Gi0/1
+interface GigabitEthernet0/2
+  ip address dhcp
+  ipv6 address dhcp
+  ip nat outside
+  ipv6 address autoconfig default
+  ipv6 enable
+ip access-list extended NAT
+   permit ip ${cidrhost(ip_prefix, 0)} ${wildcard_mask[16]} any
+ip nat inside source list NAT interface GigabitEthernet0/2 overload
+no banner exec
+no banner login
+no banner motd
+end

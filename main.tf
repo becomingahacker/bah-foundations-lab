@@ -25,12 +25,12 @@ module "user" {
 }
 
 module "pod" {
-  source     = "./module-cml2-foundations-lab"
-  count      = local.cfg.pod_count
-  title      = format("Becoming a Hacker Foundations - Pod %02d", count.index + 1)
-  pod_number = count.index + 1
-  ip_prefix  = cidrsubnet("10.0.0.0/8", 8, count.index + 1)
-  domain_name  = format("pod%d.%s", count.index +1, local.cfg.domain_name)
+  source      = "./module-cml2-foundations-lab"
+  count       = local.cfg.pod_count
+  title       = format("Becoming a Hacker Foundations - Pod %02d", count.index + 1)
+  pod_number  = count.index + 1
+  ip_prefix   = cidrsubnet("10.0.0.0/8", 8, count.index + 1)
+  domain_name = format("pod%d.%s", count.index + 1, local.cfg.domain_name)
 }
 
 module "group" {
@@ -40,5 +40,5 @@ module "group" {
   description = format("Permission group for pod%d", count.index + 1)
   member_ids  = [module.user[count.index].user_id]
   lab_ids     = [module.pod[count.index].lab_id]
-  permission = "read_write"
+  permission  = "read_write"
 }

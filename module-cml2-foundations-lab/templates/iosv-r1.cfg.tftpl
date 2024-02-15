@@ -1,0 +1,14 @@
+hostname iosv-r1
+no service config
+ip domain name ${domain_name}
+ip name-server ${v4_name_server}
+interface GigabitEthernet0/0
+  description iosv-r2 Gi0/0
+  ip address ${format("%s %s", cidrhost(l0_prefix, 1), cidrnetmask(l0_prefix))} 
+interface GigabitEthernet0/1
+  description iosv-r1 Gi0/1
+ip route 0.0.0.0 0.0.0.0 ${cidrhost(l0_prefix, 2)}
+no banner exec
+no banner login
+no banner motd
+end

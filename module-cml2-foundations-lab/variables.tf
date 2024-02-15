@@ -8,3 +8,8 @@ variable "title" {
   type        = string
   description = "Lab name"
 }
+
+variable "pod_number" {
+  type        = number
+  description = "Pod number"
+}

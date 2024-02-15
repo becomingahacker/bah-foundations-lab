@@ -1,0 +1,6 @@
+.envrc
+.terraform
+.terraform.tfstate*
+terraform.tfstate*
+*.swp
+.DS_Store

@@ -27,8 +27,8 @@ resource "cml2_node" "iosv-r1" {
   label          = "iosv-r1"
   nodedefinition = "iosv"
   ram            = 768
-  x              = 100
-  y              = 100
+  x              = 80
+  y              = 120
   tags           = ["group1"]
   configuration = <<-EOT
     hostname iosv-r1
@@ -53,8 +53,8 @@ resource "cml2_node" "iosv-r2" {
   label          = "iosv-r2"
   nodedefinition = "iosv"
   ram            = 768
-  x              = 300
-  y              = 100
+  x              = 280
+  y              = 120
   configuration = <<-EOT
     hostname iosv-r2
     ip domain name becomingahacker.com
@@ -90,8 +90,8 @@ resource "cml2_node" "ext-conn-0" {
   label          = "ext-conn-0"
   nodedefinition = "external_connector"
   ram            = null
-  x              = 500
-  y              = 100
+  x              = 440
+  y              = 120
   configuration = "NAT"
 }
 

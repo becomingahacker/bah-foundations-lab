@@ -15,12 +15,14 @@ module "secrets" {
 }
 
 module "users" {
-  source = "./module-cml2-users"
-  cfg    = local.cfg_file
+  source     = "./module-cml2-users"
+  count      = local.cfg.pod_count
+  cfg        = local.cfg_file
+  pod_number = count.index + 1
 }
 
 module "lab" {
   source = "./module-cml2-foundations-lab"
-  count = local.cfg.pod_count
-  title = "Becoming a Hacker Foundations - Pod ${format("%02d",count.index + 1)}"
+  count  = local.cfg.pod_count
+  title  = "Becoming a Hacker Foundations - Pod ${format("%02d", count.index + 1)}"
 }

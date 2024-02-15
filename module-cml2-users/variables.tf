@@ -8,3 +8,8 @@ variable "cfg" {
   type        = string
   description = "JSON configuration of the CML deployment"
 }
+
+variable "pod_number" {
+  type        = number
+  description = "Pod number"
+}

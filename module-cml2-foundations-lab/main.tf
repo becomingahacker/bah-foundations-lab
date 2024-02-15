@@ -30,7 +30,7 @@ resource "cml2_node" "iosv-r1" {
   x              = 80
   y              = 120
   tags           = ["group1"]
-  configuration = <<-EOT
+  configuration  = <<-EOT
     hostname iosv-r1
     no service config
     ip domain name becomingahacker.com
@@ -55,7 +55,7 @@ resource "cml2_node" "iosv-r2" {
   ram            = 768
   x              = 280
   y              = 120
-  configuration = <<-EOT
+  configuration  = <<-EOT
     hostname iosv-r2
     ip domain name becomingahacker.com
     ip name-server 172.31.0.2
@@ -92,7 +92,7 @@ resource "cml2_node" "ext-conn-0" {
   ram            = null
   x              = 440
   y              = 120
-  configuration = "NAT"
+  configuration  = "NAT"
 }
 
 resource "cml2_link" "l0" {
@@ -141,7 +141,7 @@ resource "cml2_lifecycle" "top" {
 
   lifecycle {
     ignore_changes = [
-      state 
+      state
     ]
   }
 }

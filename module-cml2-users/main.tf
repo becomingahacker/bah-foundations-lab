@@ -8,16 +8,15 @@ locals {
   cfg = yamldecode(var.cfg)
 }
 
-resource "random_pet" "cml_password" {
-  count = local.cfg.pod_count
+resource "random_pet" "pod_password" {
+  length = 3
 }
 
 resource "cml2_user" "pod_user" {
-  count       = local.cfg.pod_count
-  username    = "pod${count.index + 1}"
-  password    = resource.random_pet.cml_password[count.index].id
-  fullname    = "Pod ${count.index + 1} Student"
-  description = "Pod ${count.index + 1} Student"
-  email       = "pod${count.index + 1}@${local.cfg.domain_name}"
+  username    = "pod${var.pod_number}"
+  password    = resource.random_pet.pod_password.id
+  fullname    = "Pod ${var.pod_number} Student"
+  description = "Pod ${var.pod_number} Student"
+  email       = "pod${var.pod_number}@${local.cfg.domain_name}"
   is_admin    = false
 }

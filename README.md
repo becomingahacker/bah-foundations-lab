@@ -35,3 +35,22 @@ terraform output -json | jq .cml_credentials.value
 * You can either ask the students to start the labs themselves, or you can start
   all nodes from Tools &rarr; System Administration &rarr; Node Administration
   &rarr; Select All, then `Start`.
+
+## Troubleshooting
+
+### cty.StringVal("STARTED")
+
+If you see an error like this:
+```
+│ Error: Provider produced inconsistent result after apply
+│
+│ When applying changes to module.pod[1].cml2_lifecycle.top, provider
+| "provider[\"registry.terraform.io/ciscodevnet/cml2\"]" produced an unexpected
+| new value: .state: was cty.StringVal("DEFINED_ON_CORE"), but now
+| cty.StringVal("STARTED").
+```
+It means you're trying to change labs that are currently running.  You have to
+stop and wipe them before making kinds of changes.
+
+* Stop all nodes from Tools &rarr; System Administration &rarr; Node Administration
+  &rarr; Select All, then `Stop`, followed by `Wipe`.

@@ -25,14 +25,14 @@ resource "cml2_lab" "foundations_lab" {
 
 resource "cml2_node" "iosv-r1" {
   lab_id         = cml2_lab.foundations_lab.id
-  label          = "iosv-r1"
+  label          = "pod${var.pod_number}-iosv-r1"
   nodedefinition = "iosv"
   ram            = 768
   x              = 80
   y              = 120
   tags           = ["group1"]
   configuration  = <<-EOT
-    hostname iosv-r1
+    hostname pod${var.pod_number}-iosv-r1
     no service config
     ip domain name becomingahacker.com
     ip name-server 172.31.0.2
@@ -51,13 +51,13 @@ resource "cml2_node" "iosv-r1" {
 
 resource "cml2_node" "iosv-r2" {
   lab_id         = cml2_lab.foundations_lab.id
-  label          = "iosv-r2"
+  label          = "pod${var.pod_number}-iosv-r2"
   nodedefinition = "iosv"
   ram            = 768
   x              = 280
   y              = 120
   configuration  = <<-EOT
-    hostname iosv-r2
+    hostname pod${var.pod_number}-iosv-r2
     ip domain name becomingahacker.com
     ip name-server 172.31.0.2
     ip name-server FD00:EC2::253
@@ -88,7 +88,7 @@ resource "cml2_node" "iosv-r2" {
 
 resource "cml2_node" "ext-conn-0" {
   lab_id         = cml2_lab.foundations_lab.id
-  label          = "ext-conn-0"
+  label          = "Internet"
   nodedefinition = "external_connector"
   ram            = null
   x              = 440

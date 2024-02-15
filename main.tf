@@ -38,4 +38,5 @@ module "group" {
   description = format("Permission group for pod%d", count.index + 1)
   member_ids  = [module.user[count.index].user_id]
   lab_ids     = [module.pod[count.index].lab_id]
+  permission = "read_write"
 }

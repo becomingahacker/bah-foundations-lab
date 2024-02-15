@@ -18,6 +18,11 @@ Labs will be created, along with pod users, groups and passwords.
 
 ```
 terraform output -json | jq .cml_credentials.value
+```
+
+Example:
+```
+terraform output -json | jq .cml_credentials.value
 {
   "pod1": "personally-cute-manatee",
   "pod2": "evidently-eternal-treefrog",

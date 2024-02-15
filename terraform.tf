@@ -24,7 +24,7 @@ terraform {
 provider "cml2" {
   address        = "https://${local.cfg.lb_fqdn}"
   username       = local.cfg.app.user
-  password       = module.secrets.conjur_secrets[local.cfg.app.pass]
+  password       = module.secret.conjur_secrets[local.cfg.app.pass]
   use_cache      = false
   skip_verify    = false
   dynamic_config = true

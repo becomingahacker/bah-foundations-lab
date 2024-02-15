@@ -5,6 +5,6 @@
 #
 
 output "cml_credentials" {
-    value = { for user in module.users : user.cml_user => user.cml_password }
+    value = { for user in module.user : user.cml_user => user.cml_password }
     sensitive = true
 }

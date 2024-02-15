@@ -4,6 +4,46 @@
 # All rights reserved.
 #
 
+locals {
+  # HACK cmm - gross!
+  wildcard_mask = [
+    "255.255.255.255",
+    "127.255.255.255",
+    "63.255.255.255",
+    "31.255.255.255",
+    "15.255.255.255",
+    "7.255.255.255",
+    "3.255.255.255",
+    "1.255.255.255",
+    "0.255.255.255",
+    "0.127.255.255",
+    "0.63.255.255",
+    "0.31.255.255",
+    "0.15.255.255",
+    "0.7.255.255",
+    "0.3.255.255",
+    "0.1.255.255",
+    "0.0.255.255",
+    "0.0.127.255",
+    "0.0.63.255",
+    "0.0.31.255",
+    "0.0.15.255",
+    "0.0.7.255",
+    "0.0.3.255",
+    "0.0.1.255",
+    "0.0.0.255",
+    "0.0.0.127",
+    "0.0.0.63",
+    "0.0.0.31",
+    "0.0.0.15",
+    "0.0.0.7",
+    "0.0.0.3",
+    "0.0.0.1",
+    "0.0.0.0",
+  ]
+  l0_prefix = cidrsubnet(var.ip_prefix, 8, 1)
+}
+
 resource "cml2_lab" "foundations_lab" {
   title       = var.title
   description = "Becoming a Hacker Foundations"
@@ -25,23 +65,23 @@ resource "cml2_lab" "foundations_lab" {
 
 resource "cml2_node" "iosv-r1" {
   lab_id         = cml2_lab.foundations_lab.id
-  label          = "pod${var.pod_number}-iosv-r1"
+  label          = "iosv-r1"
   nodedefinition = "iosv"
   ram            = 768
   x              = 80
   y              = 120
   tags           = ["group1"]
   configuration  = <<-EOT
-    hostname pod${var.pod_number}-iosv-r1
+    hostname iosv-r1
     no service config
-    ip domain name becomingahacker.com
+    ip domain name ${var.domain_name}
     ip name-server 172.31.0.2
     interface GigabitEthernet0/0
       description iosv-r2 Gi0/0
-      ip address 10.0.0.1 255.255.255.0
+      ip address ${format("%s %s", cidrhost(local.l0_prefix, 1), cidrnetmask(local.l0_prefix))} 
     interface GigabitEthernet0/1
       description iosv-r1 Gi0/1
-    ip route 0.0.0.0 0.0.0.0 10.0.0.2
+    ip route 0.0.0.0 0.0.0.0 ${cidrhost(local.l0_prefix, 2)}
     no banner exec
     no banner login
     no banner motd
@@ -51,14 +91,15 @@ resource "cml2_node" "iosv-r1" {
 
 resource "cml2_node" "iosv-r2" {
   lab_id         = cml2_lab.foundations_lab.id
-  label          = "pod${var.pod_number}-iosv-r2"
+  label          = "iosv-r2"
   nodedefinition = "iosv"
   ram            = 768
   x              = 280
   y              = 120
   configuration  = <<-EOT
-    hostname pod${var.pod_number}-iosv-r2
-    ip domain name becomingahacker.com
+    hostname iosv-r2
+    no service config
+    ip domain name ${var.domain_name}
     ip name-server 172.31.0.2
     ip name-server FD00:EC2::253
     ip cef
@@ -66,7 +107,7 @@ resource "cml2_node" "iosv-r2" {
     ipv6 cef
     interface GigabitEthernet0/0
       description iosv-r1 Gi0/0
-      ip address 10.0.0.2 255.255.255.0
+      ip address ${format("%s %s", cidrhost(local.l0_prefix, 2), cidrnetmask(local.l0_prefix))} 
       ip nat inside
     interface GigabitEthernet0/1
       description iosv-r1 Gi0/1
@@ -77,7 +118,7 @@ resource "cml2_node" "iosv-r2" {
       ipv6 address autoconfig default
       ipv6 enable
     ip access-list extended NAT
-       permit ip 10.0.0.0 0.0.0.255 any
+       permit ip ${cidrhost(var.ip_prefix, 0)} ${local.wildcard_mask[16]} any
     ip nat inside source list NAT interface GigabitEthernet0/2 overload
     no banner exec
     no banner login

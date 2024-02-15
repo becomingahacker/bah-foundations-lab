@@ -13,3 +13,13 @@ variable "pod_number" {
   type        = number
   description = "Pod number"
 }
+
+variable "ip_prefix" {
+  type        = string
+  description = "IP prefix for the pod"
+}
+
+variable "domain_name" {
+  type        = string
+  description = "IP prefix for the pod"
+}

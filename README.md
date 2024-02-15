@@ -52,5 +52,31 @@ If you see an error like this:
 It means you're trying to change labs that are currently running.  You have to
 stop and wipe them before making kinds of changes.
 
-* Stop all nodes from Tools &rarr; System Administration &rarr; Node Administration
-  &rarr; Select All, then `Stop`, followed by `Wipe`.
+* Stop all nodes from the Dashboard, Choose `Rows per Page: All`, Select All,
+  then `Stop`, followed by `Wipe`, then `terraform apply` again:
+
+```
+terraform apply
+```
+
+* If this doesn't fix it, delete a single pod and reapply:
+
+```
+terraform destroy -target 'module.pod[14]'
+```
+```
+terraform apply
+```
+
+If this still doesn't fix it, delete all the pods and start over:
+
+```
+terraform destroy -target 'module.pod'
+```
+```
+terraform apply
+```
+
+This is, of course, a destructive operation and the whole class will have to restart their labs.
+
+**Note**: If you destroy the entire deployment, all the passwords will change upon apply!

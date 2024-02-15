@@ -11,6 +11,8 @@
 # Becoming a Hacker Load Balancer FQDN
 lb_fqdn: becomingahacker.com
 
+domain_name: becomingahacker.com
+
 secrets:
   - &app_password  sto/becomingahacker/secret/common/becomingahacker.com/prod/host/cml-0.becomingahacker.com/admin_password
 
@@ -18,4 +20,4 @@ app:
   user: admin
   pass: *app_password
 
-pod_count: 3
+pod_count: 1

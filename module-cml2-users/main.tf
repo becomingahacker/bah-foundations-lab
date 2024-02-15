@@ -18,6 +18,6 @@ resource "cml2_user" "pod_user" {
   password    = resource.random_pet.cml_password[count.index].id
   fullname    = "Pod ${count.index + 1} Student"
   description = "Pod ${count.index + 1} Student"
-  email       = "pod${count.index + 1}@example.com"
+  email       = "pod${count.index + 1}@${local.cfg.domain_name}"
   is_admin    = false
 }

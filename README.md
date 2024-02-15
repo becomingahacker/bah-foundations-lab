@@ -33,7 +33,7 @@ terraform output -json | jq .cml_credentials.value
 ## Start Labs
 
 * You can either ask the students to start the labs themselves, or you can start
-  Start all labs from the Dashboard, Choose `Rows per Page: All`, Select All,
+  all labs from the Dashboard, Choose `Rows per Page: All`, Select All,
   then `Start`.
   
 ## Troubleshooting

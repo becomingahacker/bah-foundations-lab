@@ -18,6 +18,7 @@ terraform {
     bucket = "bah-cml-terraform-state"
     key    = "bah-foundations-lab/terraform.tfstate"
     region = "us-east-2"
+    encrypt = true
   }
 }
 

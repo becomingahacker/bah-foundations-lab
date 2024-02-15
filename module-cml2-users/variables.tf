@@ -4,12 +4,28 @@
 # All rights reserved.
 #
 
-variable "cfg" {
+variable "username" {
   type        = string
-  description = "JSON configuration of the CML deployment"
+  description = "User name"
 }
 
-variable "pod_number" {
-  type        = number
-  description = "Pod number"
+variable "fullname" {
+  type        = string
+  description = "User full name"
+}
+
+variable "description" {
+  type        = string
+  description = "User description"
+}
+
+variable "email" {
+  type        = string
+  description = "User email address"
+}
+
+variable "is_admin" {
+  type        = bool
+  description = "If user is an admin or not"
+  default     = false
 }

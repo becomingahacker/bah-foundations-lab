@@ -1,6 +1,6 @@
 #
-# This file is part of Cisco Modeling Labs
-# Copyright (c) 2019-2023, Cisco Systems, Inc.
+# This file is part of Becoming a Hacker Foundations
+# Copyright (c) 2024, Cisco Systems, Inc.
 # All rights reserved.
 #
 

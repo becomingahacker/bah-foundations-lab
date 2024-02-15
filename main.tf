@@ -22,5 +22,5 @@ module "users" {
 module "lab" {
   source = "./module-cml2-foundations-lab"
   count = local.cfg.pod_count
-  title = "Becoming a Hacker Foundations - Pod ${count.index + 1}"
+  title = "Becoming a Hacker Foundations - Pod ${format("%02d",count.index + 1)}"
 }

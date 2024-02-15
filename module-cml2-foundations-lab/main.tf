@@ -9,17 +9,17 @@ locals {
   v6_name_server = "FD00:EC2::253" # AWS VPC DNS
   l0_prefix      = cidrsubnet(var.ip_prefix, 8, 1)
 
-  foundations_lab_notes = templatefile("${path.module}/templates/foundations-lab-notes.tftpl", {
+  foundations_lab_notes = templatefile("${path.module}/templates/foundations-lab-notes.md.tftpl", {
     domain_name = var.domain_name,
   })
 
-  iosv_r1_config = templatefile("${path.module}/templates/iosv-r1.tftpl", {
+  iosv_r1_config = templatefile("${path.module}/templates/iosv-r1.cfg.tftpl", {
     domain_name    = var.domain_name,
     v4_name_server = local.v4_name_server,
     l0_prefix      = local.l0_prefix,
   })
 
-  iosv_r2_config = templatefile("${path.module}/templates/iosv-r2.tftpl", {
+  iosv_r2_config = templatefile("${path.module}/templates/iosv-r2.cfg.tftpl", {
     domain_name    = var.domain_name,
     v4_name_server = local.v4_name_server,
     v6_name_server = local.v6_name_server,

@@ -33,9 +33,9 @@ terraform output -json | jq .cml_credentials.value
 ## Start Labs
 
 * You can either ask the students to start the labs themselves, or you can start
-  all nodes from Tools &rarr; System Administration &rarr; Node Administration
-  &rarr; Select All, then `Start`.
-
+  Start all labs from the Dashboard, Choose `Rows per Page: All`, Select All,
+  then `Start`.
+  
 ## Troubleshooting
 
 ### cty.StringVal("STARTED")
@@ -52,17 +52,18 @@ If you see an error like this:
 It means you're trying to change labs that are currently running.  You have to
 stop and wipe them before making kinds of changes.
 
-* Stop all nodes from the Dashboard, Choose `Rows per Page: All`, Select All,
+* Stop all labs from the Dashboard, Choose `Rows per Page: All`, Select All,
   then `Stop`, followed by `Wipe`, then `terraform apply` again:
 
 ```
 terraform apply
 ```
 
-* If this doesn't fix it, delete a single pod and reapply:
+* If this doesn't fix it, delete the single applicable pod in the error message
+  and reapply:
 
 ```
-terraform destroy -target 'module.pod[14]'
+terraform destroy -target 'module.pod[1]'
 ```
 ```
 terraform apply

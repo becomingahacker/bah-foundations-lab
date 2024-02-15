@@ -13,6 +13,11 @@ lb_fqdn: becomingahacker.com
 
 domain_name: becomingahacker.com
 
+aws:
+  # Must be globally unique and updated in terraform.tf backend config
+  tfstate-bucket: bah-cml-terraform-state
+  tfstate-key: bah-foundations-lab/terraform.tfstate
+
 secrets:
   - &app_password  sto/becomingahacker/secret/common/becomingahacker.com/prod/host/cml-0.becomingahacker.com/admin_password
 
@@ -20,4 +25,4 @@ app:
   user: admin
   pass: *app_password
 
-pod_count: 20
+pod_count: 3

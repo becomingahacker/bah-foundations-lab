@@ -11,7 +11,14 @@ terraform {
       version = "~>0.7.0"
     }
   }
+
   required_version = ">= 1.1.0"
+
+  backend "s3" {
+    bucket = "bah-cml-terraform-state"
+    key    = "bah-foundations-lab/terraform.tfstate"
+    region = "us-east-2"
+  }
 }
 
 provider "cml2" {

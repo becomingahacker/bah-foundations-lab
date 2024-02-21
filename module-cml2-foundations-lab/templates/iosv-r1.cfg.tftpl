@@ -7,6 +7,8 @@ interface GigabitEthernet0/0
   ip address ${format("%s %s", cidrhost(l0_prefix, 1), cidrnetmask(l0_prefix))} 
 interface GigabitEthernet0/1
   description iosv-r1 Gi0/1
+interface GigabitEthernet0/2
+  description kali-0 eth0
 ip route 0.0.0.0 0.0.0.0 ${cidrhost(l0_prefix, 2)}
 no banner exec
 no banner login

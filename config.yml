@@ -25,4 +25,4 @@ app:
   user: admin
   pass: *app_password
 
-pod_count: 1
+pod_count: 50

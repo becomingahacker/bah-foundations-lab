@@ -48,34 +48,35 @@ resource "cml2_node" "kali" {
   lab_id         = cml2_lab.foundations_lab.id
   label          = "kali"
   nodedefinition = "kali-linux"
-  ram            = 4096
+  ram            = 8192
+  boot_disk_size = 64
   x              = 80
   y              = 120
   tags           = ["host"]
   configuration  = local.kali_config
 }
 
-resource "cml2_node" "iosv-r1" {
-  lab_id         = cml2_lab.foundations_lab.id
-  label          = "iosv-r1"
-  nodedefinition = "iosv"
-  ram            = 768
-  x              = 280
-  y              = 120
-  tags           = ["router"]
-  configuration  = local.iosv_r1_config
-}
+#resource "cml2_node" "iosv-r1" {
+#  lab_id         = cml2_lab.foundations_lab.id
+#  label          = "iosv-r1"
+#  nodedefinition = "iosv"
+#  ram            = 768
+#  x              = 280
+#  y              = 120
+#  tags           = ["router"]
+#  configuration  = local.iosv_r1_config
+#}
 
-resource "cml2_node" "iosv-r2" {
-  lab_id         = cml2_lab.foundations_lab.id
-  label          = "iosv-r2"
-  nodedefinition = "iosv"
-  ram            = 768
-  x              = 480
-  y              = 120
-  tags           = ["router"]
-  configuration  = local.iosv_r2_config
-}
+#resource "cml2_node" "iosv-r2" {
+#  lab_id         = cml2_lab.foundations_lab.id
+#  label          = "iosv-r2"
+#  nodedefinition = "iosv"
+#  ram            = 768
+#  x              = 480
+#  y              = 120
+#  tags           = ["router"]
+#  configuration  = local.iosv_r2_config
+#}
 
 resource "cml2_node" "ext-conn-0" {
   lab_id         = cml2_lab.foundations_lab.id
@@ -91,34 +92,35 @@ resource "cml2_node" "ext-conn-0" {
 resource "cml2_link" "l0" {
   lab_id = cml2_lab.foundations_lab.id
   node_a = cml2_node.kali.id
-  node_b = cml2_node.iosv-r1.id
-  slot_a = 0
-  slot_b = 2
-}
-
-resource "cml2_link" "l1" {
-  lab_id = cml2_lab.foundations_lab.id
-  node_a = cml2_node.iosv-r1.id
-  node_b = cml2_node.iosv-r2.id
-  slot_a = 0
-  slot_b = 0
-}
-
-resource "cml2_link" "l2" {
-  lab_id = cml2_lab.foundations_lab.id
-  node_a = cml2_node.iosv-r1.id
-  node_b = cml2_node.iosv-r2.id
-  slot_a = 1
-  slot_b = 1
-}
-
-resource "cml2_link" "l3" {
-  lab_id = cml2_lab.foundations_lab.id
-  node_a = cml2_node.iosv-r2.id
+  #node_b = cml2_node.iosv-r1.id
   node_b = cml2_node.ext-conn-0.id
-  slot_a = 2
+  slot_a = 0
   slot_b = 0
 }
+
+#resource "cml2_link" "l1" {
+#  lab_id = cml2_lab.foundations_lab.id
+#  node_a = cml2_node.iosv-r1.id
+#  node_b = cml2_node.iosv-r2.id
+#  slot_a = 0
+#  slot_b = 0
+#}
+
+#resource "cml2_link" "l2" {
+#  lab_id = cml2_lab.foundations_lab.id
+#  node_a = cml2_node.iosv-r1.id
+#  node_b = cml2_node.iosv-r2.id
+#  slot_a = 1
+#  slot_b = 1
+#}
+
+#resource "cml2_link" "l3" {
+#  lab_id = cml2_lab.foundations_lab.id
+#  node_a = cml2_node.iosv-r2.id
+#  node_b = cml2_node.ext-conn-0.id
+#  slot_a = 2
+#  slot_b = 0
+#}
 
 resource "cml2_lifecycle" "top" {
   lab_id = cml2_lab.foundations_lab.id
@@ -126,13 +128,13 @@ resource "cml2_lifecycle" "top" {
   # the elements list has the dependencies
   elements = [
     cml2_node.kali.id,
-    cml2_node.iosv-r1.id,
-    cml2_node.iosv-r2.id,
+    #cml2_node.iosv-r1.id,
+    #cml2_node.iosv-r2.id,
     cml2_node.ext-conn-0.id,
     cml2_link.l0.id,
-    cml2_link.l1.id,
-    cml2_link.l2.id,
-    cml2_link.l3.id,
+    #cml2_link.l1.id,
+    #cml2_link.l2.id,
+    #cml2_link.l3.id,
   ]
 
   staging = {

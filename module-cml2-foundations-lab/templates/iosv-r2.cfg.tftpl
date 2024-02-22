@@ -10,17 +10,21 @@ interface GigabitEthernet0/0
   description iosv-r1 Gi0/0
   ip address ${format("%s %s", cidrhost(l0_prefix, 2), cidrnetmask(l0_prefix))} 
   ip nat inside
+  no shutdown
 interface GigabitEthernet0/1
   description iosv-r1 Gi0/1
+  no shutdown
 interface GigabitEthernet0/2
   ip address dhcp
   ipv6 address dhcp
   ip nat outside
   ipv6 address autoconfig default
   ipv6 enable
+  no shutdown
 ip access-list extended NAT
    permit ip ${cidrhost(ip_prefix, 0)} ${wildcard_mask[16]} any
 ip nat inside source list NAT interface GigabitEthernet0/2 overload
+ip route ${ format("%s %s %s", cidrhost(l2_prefix, 0), cidrnetmask(l2_prefix), cidrhost(l0_prefix, 1)) }
 no banner exec
 no banner login
 no banner motd

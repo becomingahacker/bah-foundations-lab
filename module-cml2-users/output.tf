@@ -9,7 +9,7 @@ output "username" {
 }
 
 output "password" {
-  value     = random_pet.pod_password.id
+  value     = var.password == "" ? random_pet.pod_password.id : var.password
   sensitive = true
 }
 

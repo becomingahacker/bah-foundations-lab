@@ -29,3 +29,9 @@ variable "is_admin" {
   description = "If user is an admin or not"
   default     = false
 }
+
+variable "password" {
+  type        = string
+  description = "User password"
+  default     = ""
+}

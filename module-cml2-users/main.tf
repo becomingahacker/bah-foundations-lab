@@ -10,7 +10,7 @@ resource "random_pet" "pod_password" {
 
 resource "cml2_user" "pod_user" {
   username    = var.username
-  password    = resource.random_pet.pod_password.id
+  password    = var.password == "" ? resource.random_pet.pod_password.id : var.password
   fullname    = var.fullname
   description = var.description
   email       = var.email

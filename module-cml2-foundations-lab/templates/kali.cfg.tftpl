@@ -8,4 +8,17 @@ password: cisco
 chpasswd: { expire: False }
 ssh_pwauth: True
 #ssh_authorized_keys:
-#   - your-ssh-pubkey-line-goes-here
+#   - your-ssh-pubkey-line-goes-hereruncmd:
+
+bootcmd:
+  - systemctl disable blueman-mechanism.service
+  - apt install -y locales-all
+  - locale-gen --purge en_US.UTF-8
+  - dpkg-reconfigure xorg
+  - touch /root/.hushlogin
+
+write_files:
+  - path: /etc/default/locale
+    content: |
+      LANG=en_US.UTF-8
+      LC_ALL=en_US.UTF-8

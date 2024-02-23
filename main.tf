@@ -5,8 +5,9 @@
 #
 
 locals {
-  cfg_file = file("config.yml")
-  cfg      = yamldecode(local.cfg_file)
+  cfg_file       = file("config.yml")
+  cfg            = yamldecode(local.cfg_file)
+  passwords_hack = fileexists("${path.root}/cml_credentials.json") ? jsondecode(file("${path.root}/cml_credentials.json")) : {}
 }
 
 module "secret" {
@@ -18,6 +19,7 @@ module "user" {
   source      = "./module-cml2-users"
   count       = local.cfg.pod_count
   username    = "pod${count.index + 1}"
+  password    = lookup(local.passwords_hack, "pod${count.index + 1}", "")
   fullname    = "Pod ${count.index + 1} Student"
   description = "Pod ${count.index + 1} Student"
   email       = "pod${count.index + 1}@${local.cfg.domain_name}"

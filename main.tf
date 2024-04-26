@@ -7,7 +7,7 @@
 locals {
   cfg_file       = file("config.yml")
   cfg            = yamldecode(local.cfg_file)
-  passwords_hack = fileexists("${path.root}/cml_credentials.json") ? jsondecode(file("${path.root}/cml_credentials.json")) : {}
+  passwords_override = fileexists("${path.root}/cml_credentials.json") ? jsondecode(file("${path.root}/cml_credentials.json")) : {}
 }
 
 module "secret" {
@@ -18,11 +18,11 @@ module "secret" {
 module "user" {
   source      = "./module-cml2-users"
   count       = local.cfg.pod_count
-  username    = "pod${count.index + 1}"
-  password    = lookup(local.passwords_hack, "pod${count.index + 1}", "")
-  fullname    = "Pod ${count.index + 1} Student"
-  description = "Pod ${count.index + 1} Student"
-  email       = "pod${count.index + 1}@${local.cfg.domain_name}"
+  username    = "bahf-pod${count.index + 1}"
+  password    = lookup(local.passwords_override, "bahf-pod${count.index + 1}", "")
+  fullname    = "BAH Foundations Pod ${count.index + 1} Student"
+  description = "BAH Foundations Pod ${count.index + 1} Student"
+  email       = "bahf-pod${count.index + 1}@${local.cfg.domain_name}"
   is_admin    = false
 }
 
@@ -32,14 +32,14 @@ module "pod" {
   title       = format("Becoming a Hacker Foundations - Pod %02d", count.index + 1)
   pod_number  = count.index + 1
   ip_prefix   = cidrsubnet("10.0.0.0/8", 8, count.index + 1)
-  domain_name = format("pod%d.%s", count.index + 1, local.cfg.domain_name)
+  domain_name = format("bahf-pod%d.%s", count.index + 1, local.cfg.domain_name)
 }
 
 module "group" {
   source      = "./module-cml2-group"
   count       = local.cfg.pod_count
-  group_name  = format("pod%d", count.index + 1)
-  description = format("Permission group for pod%d", count.index + 1)
+  group_name  = format("bahf-pod%d", count.index + 1)
+  description = format("Permission group for bahf-pod%d", count.index + 1)
   member_ids  = [module.user[count.index].user_id]
   lab_ids     = [module.pod[count.index].lab_id]
   permission  = "read_write"

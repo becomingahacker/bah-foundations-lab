@@ -30,29 +30,28 @@ terraform output -json | jq .cml_credentials.value
 } 
 ```
 
-## Override Passwords
-
-If you want to override the randomized passwords that are generated, create a file
-in the workspace root called `cml_credentials.json`.  The file should have the same
-format as `terraform output -json | jq .cml_credentials.value`, e.g.
-
-```json
-{
-  "pod1": "rarely-valid-sole",
-  "pod10": "lately-settled-ghoul",
-  "pod2": "manually-artistic-penguin",
-  "pod3": "trivially-proper-chigger",
-  "pod4": "strictly-tough-burro",
-  "pod5": "neatly-sunny-crane",
-  "pod6": "thoroughly-settling-beagle",
-  "pod7": "nationally-sincere-gannet",
-  "pod8": "legally-enabled-wolf",
-  "pod9": "presumably-refined-camel"
-}
-```
-
-If the pod is not defined, it will get a randomly-generated password based on
-[`random_pet`](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/pet).
+> [!NOTE]
+> If you want to override the randomized passwords that are generated, create a file
+> in the workspace root called `cml_credentials.json`.  The file should have the same
+> format as `terraform output -json | jq .cml_credentials.value`, e.g.
+>
+> ```json
+> {
+>   "pod1": "rarely-valid-sole",
+>   "pod10": "lately-settled-ghoul",
+>   "pod2": "manually-artistic-penguin",
+>   "pod3": "trivially-proper-chigger",
+>   "pod4": "strictly-tough-burro",
+>   "pod5": "neatly-sunny-crane",
+>   "pod6": "thoroughly-settling-beagle",
+>   "pod7": "nationally-sincere-gannet",
+>   "pod8": "legally-enabled-wolf",
+>   "pod9": "presumably-refined-camel"
+> }
+> ```
+> 
+> If the pod is not defined, it will get a randomly-generated password based on
+> [`random_pet`](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/pet).
 
 ## Start Labs
 

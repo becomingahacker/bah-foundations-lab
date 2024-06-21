@@ -4,6 +4,20 @@
 # All rights reserved.
 #
 
+########
+# Configs
+#########
+export TF_VAR_cfg_file="config.yml"
+#export TF_VAR_cfg_extra_vars=""
+
+#########
+# Secrets
+#########
+
+#
+# Conjur
+#
+
 # These assume you've already set up the Conjur CLI and logged in.  This will
 # add secrets to the OS Keychain.
 

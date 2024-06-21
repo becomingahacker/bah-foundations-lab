@@ -24,7 +24,6 @@ gcp:
   zone: us-east1-b
   subnet_cidr: 10.11.2.0/24
   bucket: bah-machine-images
-  #machine_type: c3-standard-4-lssd
   # Machines will inherit the SSH keys from project's metadata for all users unless you provide below
   # <user>:<ssh public key>
   # e.g. ssh_key: "cml:ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGDAqIBESzn9J9rdSLarhyU6GNycV+43DkdkNzSgfLrP"
@@ -33,7 +32,7 @@ gcp:
 
 c8k:
   image_family: cisco-c8k
-  machine_type: n2-standard-4
+  machine_type: n1-standard-4
 
 secret:
   # At this time, 'vault', 'conjur' and 'dummy' are supported secrets managers.

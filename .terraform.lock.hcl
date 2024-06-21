@@ -1,6 +1,14 @@
 # This file is maintained automatically by "terraform init".
 # Manual edits may be lost in future updates.
 
+provider "localhost/cyberark/conjur" {
+  version     = "0.6.7"
+  constraints = "0.6.7"
+  hashes = [
+    "h1:J99zulHBWaEB/Vy26SOuFMzbdeZtTjmUQ1ZeWsZd2Kw=",
+  ]
+}
+
 provider "registry.terraform.io/ciscodevnet/cml2" {
   version     = "0.7.0"
   constraints = "~> 0.7.0"
@@ -21,14 +29,6 @@ provider "registry.terraform.io/ciscodevnet/cml2" {
     "zh:e07ef93712c67c4787ec5c779e27a95a2ce003988c4a4d4e1324405e97c6335b",
     "zh:e56ace0e7ecf908e141d76b4e35ebd93a92691b65ee66ce52b0af54fd9010f22",
     "zh:ec90b26f8fb82a7ad22b15a15eeb1c0b6648c0533934bd2b36b51f984a7ac414",
-  ]
-}
-
-provider "registry.terraform.io/cyberark/conjur" {
-  version     = "0.6.6"
-  constraints = "0.6.6"
-  hashes = [
-    "h1:047o83XTIlI7EcGxSYhi4/Va+Ijq3sXMF7x1mvCCRpI=",
   ]
 }
 

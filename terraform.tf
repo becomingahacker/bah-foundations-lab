@@ -14,11 +14,9 @@ terraform {
 
   required_version = ">= 1.1.0"
 
-  backend "s3" {
-    bucket  = "bah-cml-terraform-state"
-    key     = "bah-foundations-lab/terraform.tfstate"
-    region  = "us-east-2"
-    encrypt = true
+  backend "gcs" {
+    bucket = "bah-cml-terraform-state"
+    prefix = "bah-foundations-lab/state"
   }
 }
 

@@ -5,18 +5,28 @@
 #
 
 locals {
-  cfg_file       = file("config.yml")
-  cfg            = yamldecode(local.cfg_file)
+  raw_cfg = yamldecode(file(var.cfg_file))
+  cfg = merge(
+    {
+      for k, v in local.raw_cfg : k => v if k != "secret"
+    },
+    {
+      secrets = module.secrets.secrets
+    }
+  )
+  extras = var.cfg_extra_vars == null ? "" : (
+    fileexists(var.cfg_extra_vars) ? file(var.cfg_extra_vars) : var.cfg_extra_vars
+  )
   passwords_override = fileexists("${path.root}/cml_credentials.json") ? jsondecode(file("${path.root}/cml_credentials.json")) : {}
 }
 
-module "secret" {
-  source = "./module-cml2-secrets"
-  cfg    = local.cfg_file
+module "secrets" {
+  source = "./modules/secrets"
+  cfg    = local.raw_cfg
 }
 
 module "user" {
-  source      = "./module-cml2-users"
+  source      = "./modules/cml2-users"
   count       = local.cfg.pod_count
   username    = "bahf-pod${count.index + 1}"
   password    = lookup(local.passwords_override, "bahf-pod${count.index + 1}", "")
@@ -27,7 +37,7 @@ module "user" {
 }
 
 module "pod" {
-  source      = "./module-cml2-foundations-lab"
+  source      = "./modules/cml2-foundations-lab"
   count       = local.cfg.pod_count
   title       = format("Becoming a Hacker Foundations - Pod %02d", count.index + 1)
   pod_number  = count.index + 1
@@ -36,7 +46,7 @@ module "pod" {
 }
 
 module "group" {
-  source      = "./module-cml2-group"
+  source      = "./modules/cml2-group"
   count       = local.cfg.pod_count
   group_name  = format("bahf-pod%d", count.index + 1)
   description = format("Permission group for bahf-pod%d", count.index + 1)

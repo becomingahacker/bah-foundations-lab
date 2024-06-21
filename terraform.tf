@@ -10,6 +10,14 @@ terraform {
       source  = "CiscoDevNet/cml2"
       version = "~>0.7.0"
     }
+    google = {
+      source  = "hashicorp/google"
+      version = ">=5.28.0"
+    }
+    cloudinit = {
+      source  = "hashicorp/cloudinit"
+      version = ">=2.3.3"
+    }
   }
 
   required_version = ">= 1.1.0"
@@ -20,10 +28,17 @@ terraform {
   }
 }
 
+provider "google" {
+  credentials = local.cfg.gcp.credentials
+  project     = local.cfg.gcp.project
+  region      = local.cfg.gcp.region
+  zone        = local.cfg.gcp.zone
+}
+
 provider "cml2" {
   address        = "https://${local.cfg.lb_fqdn}"
-  username       = local.cfg.app.user
-  password       = module.secret.conjur_secrets[local.cfg.app.pass]
+  username       = local.cfg.secrets.app.username
+  password       = local.cfg.secrets.app.secret
   use_cache      = false
   skip_verify    = false
   dynamic_config = true

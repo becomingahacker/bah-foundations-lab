@@ -25,6 +25,11 @@ module "secrets" {
   cfg    = local.raw_cfg
 }
 
+module "catalyst8000v" {
+  source = "./modules/catalyst8000v"
+  cfg    = local.cfg
+}
+
 module "user" {
   source      = "./modules/cml2-users"
   count       = local.cfg.pod_count

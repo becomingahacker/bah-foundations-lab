@@ -22,17 +22,49 @@ gcp:
   project: gcp-asigbahgcp-nprd-47930
   region: us-east1
   zone: us-east1-b
-  subnet_cidr: 10.11.2.0/24
   bucket: bah-machine-images
   # Machines will inherit the SSH keys from project's metadata for all users unless you provide below
   # <user>:<ssh public key>
   # e.g. ssh_key: "cml:ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGDAqIBESzn9J9rdSLarhyU6GNycV+43DkdkNzSgfLrP"
-  ssh_key:
+  # HACK cmm - the Catalyst 8000v doesn't use project-level metadata.  It needs explicit keys.
+  ssh_keys: |
+    stieng:ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHCgsKQbtqJBMB1fDhwyuI1IDJYf2mfkVADmwfvuXqpt stieng@cisco.com
+    bootstrap_ssh_ed25519:ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGDAqIBESzn9J9rdSLarhyU6GNycV+43DkdkNzSgfLrP bootstrap_ssh_ed25519
+    cmm:ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMgtVIy38RA7DneT3dZHXMbZx13lCOBpWetiFSlZp/9s cmm@cisco.com
+    evstiles:ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFqxtqPw1G8p9y1B0baapoNLnt1owrr3UpRfLFEBuddx evstiles@cisco.com
+    nweigand:ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKh/PoDlHZ784blTY39txDUsQaI6nzdE53CjngwYM5MD nweigand@cisco.com
+    jallbrit:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDJX9lBCF2q+wkZviWilVjN7tPxja7wLYowfS8UncpkGITkPVnXcRPZzX4xeJVvoCCSjNuR+tdE7bQluMogrzZ9kKwW7vtzq95OYPbsZsOXEo9apzha2pMhQnVQWuUrME+v46TNo6jI2VGYgCV9J8puoQCTIimE0kZi2FT8/f2Qu6h/wNm3mWKsCUoZbtWK3NBrrYGpvgJkFCccJSnl7aTdOvem1PKbqg492vh4MI7ejPyBrOLGTF0oxFneLtXk0sPG8nTee0vzJrr930bS0lm77GSv+DPMiZ+De1zFGOqK6uPmLUUhfCfAMEXhghcZNKJmcmw9Jl290tqi8NMmlFp7XJ9TGXLiU1HpimRBMshkmUpdfxOwUZgVuON3yJ7KsxHKf1IfEcT1O3uDkjDOTB73NGoAu0tAJFqF9vZmxFMvp/aL1eje+ysLpqT+pBUueR55IWrmaQkOeO4Hxp/uMkX6EqLL4FP/Tsm87gkJaGGBs2/gv5cMC5E+a6K88afzk00= jallbrit@cisco.com
   dns_zone_name: becomingahacker-com
 
 c8k:
   image_family: cisco-c8k
   machine_type: n1-standard-4
+  disk_size_gb: 16
+  hostname: bah-c8k
+  network_name: cml-network
+  subnet_name: bahf-c8k-subnet
+  subnet_cidr: 100.64.2.0/24
+  service_account_id: bah-foundations
+  service_account_display_name: "Becoming a Hacker Foundations Pod Service Account"
+  allowed_ipv4_subnets:
+    ## GCE cml-subnet
+    #- "10.10.0.0/16"
+    ## GCE Health Chekers
+    #- "35.191.0.0/16"
+    #- "209.85.152.0/22"
+    #- "209.85.204.0/22"
+    ## Google Front End
+    #- "34.96.0.0/16"
+    #- "34.127.0.0/16"
+    # RTP NAT pool
+    - "173.38.117.64/26"
+    # cmm
+    - "23.116.118.232/29"
+    # cmm
+    - "99.69.22.234/32"
+    # ASIG
+    - "64.100.197.0/24"
+    - "64.100.220.0/23"
 
 secret:
   # At this time, 'vault', 'conjur' and 'dummy' are supported secrets managers.

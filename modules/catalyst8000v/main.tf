@@ -146,6 +146,28 @@ resource "google_compute_region_network_firewall_policy_rule" "c8k_firewall_rule
   target_service_accounts = [google_service_account.c8k_service_account.email]
 }
 
+resource "google_compute_region_network_firewall_policy_rule" "c8k_firewall_rule_gre" {
+  action          = "allow"
+  description     = "C8K allow GRE from CML controller"
+  direction       = "INGRESS"
+  disabled        = false
+  enable_logging  = false
+  firewall_policy = google_compute_region_network_firewall_policy.c8k_firewall_policy.id
+  priority        = 102
+  region          = var.cfg.gcp.region
+  rule_name       = "c8k-firewall-rule-gre"
+
+  match {
+    src_ip_ranges = ["100.64.1.0/24"]
+
+    layer4_configs {
+      ip_protocol = 47
+    }
+  }
+
+  target_service_accounts = [google_service_account.c8k_service_account.email]
+}
+
 resource "google_compute_address" "c8k_address_internal" {
   name         = "c8k-address-internal"
   address_type = "INTERNAL"

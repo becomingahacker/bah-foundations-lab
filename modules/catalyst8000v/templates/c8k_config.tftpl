@@ -1,0 +1,35 @@
+Section: IOS configuration 
+!
+hostname ${cfg.c8k.hostname}
+!
+ipv6 unicast-routing
+!
+interface Loopback0
+ ip address 100.64.0.255 255.255.255.255
+!
+!
+interface GigabitEthernet1
+  mtu 8896 ! maximum MTU on GCP
+  ip address dhcp
+  ip nat outside
+  negotiation auto
+  ipv6 address dhcp
+  ipv6 enable
+  ipv6 nd autoconfig default-route
+  ipv6 nd ra suppress all
+!
+%{ for pod in range(cfg.pod_count) }
+interface Tunnel${(pod)+1}
+ ip unnumbered Loopback0
+ tunnel source GigabitEthernet1
+ tunnel destination 100.64.1.${(pod)+1}
+ ipv6 enable 
+ exit
+!
+ip route ${pod_ipv4_addresses[pod]} 255.255.255.255 Tunnel${(pod)+1}
+ipv6 route ${pod_ipv6_prefixes[pod]}/96  Tunnel${(pod)+1}
+ip route 100.64.0.${(pod)+1} 255.255.255.255 Tunnel${(pod)+1}
+%{ endfor }
+!
+!
+end

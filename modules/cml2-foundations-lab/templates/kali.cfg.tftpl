@@ -16,6 +16,7 @@ runcmd:
   # Change ownership of /home/cisco to cisco
   - chown -R cisco:cisco /home/cisco
   - dpkg-reconfigure xorg
+  - systemctl enable --now getty@ttyS1
 
 #bootcmd:
 #  - true

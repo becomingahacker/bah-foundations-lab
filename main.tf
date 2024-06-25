@@ -42,12 +42,16 @@ module "user" {
 }
 
 module "pod" {
-  source      = "./modules/cml2-foundations-lab"
-  count       = local.cfg.pod_count
-  title       = format("Becoming a Hacker Foundations - Pod %02d", count.index + 1)
-  pod_number  = count.index + 1
-  ip_prefix   = cidrsubnet("10.0.0.0/8", 8, count.index + 1)
-  domain_name = format("bahf-pod%d.%s", count.index + 1, local.cfg.domain_name)
+  source                    = "./modules/cml2-foundations-lab"
+  count                     = local.cfg.pod_count
+  title                     = format("Becoming a Hacker Foundations - Pod %02d", count.index + 1)
+  pod_number                = count.index + 1
+  ip_prefix                 = cidrsubnet("10.0.0.0/8", 8, count.index + 1)
+  global_ipv4_address       = module.catalyst8000v.pod_ipv4_address[count.index]
+  global_ipv6_prefix        = module.catalyst8000v.pod_ipv6_prefix[count.index]
+  global_ipv6_prefix_length = module.catalyst8000v.pod_ipv6_prefix_length
+  internet_mtu              = module.catalyst8000v.internet_mtu
+  domain_name               = format("bahf-pod%d.%s", count.index + 1, local.cfg.domain_name)
 }
 
 module "group" {

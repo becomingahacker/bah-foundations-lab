@@ -2,24 +2,46 @@ no service config
 hostname iosv-r1
 ip domain name ${domain_name}
 ip name-server ${v4_name_server}
-interface GigabitEthernet0/0
-  description iosv-r2 Gi0/0
-  ip address ${format("%s %s", cidrhost(l0_prefix, 1), cidrnetmask(l0_prefix))} 
-  no shutdown
-interface GigabitEthernet0/1
-  description iosv-r1 Gi0/1
-  no shutdown
-interface GigabitEthernet0/2
-  description kali-0 eth0
-  ip address ${format("%s %s", cidrhost(l2_prefix, 1), cidrnetmask(l2_prefix))} 
-  no shutdown
+ip name-server ${v6_name_server}
+no ip domain lookup
+ip cef
+ipv6 unicast-routing
+ipv6 cef
 ip dhcp pool KALI
   dns-server ${v4_name_server}
   domain-name ${domain_name}
-  network ${format("%s %s", cidrhost(l2_prefix, 0), cidrnetmask(l2_prefix))}
-  default-router ${format("%s", cidrhost(l2_prefix, 1))}
-ip route 0.0.0.0 0.0.0.0 ${cidrhost(l0_prefix, 2)}
+  network ${format("%s %s", cidrhost(l0_prefix, 0), cidrnetmask(l2_prefix))}
+  default-router ${format("%s", cidrhost(l0_prefix, 1))}
+!
+interface Loopback0
+  ip address 100.64.0.${pod_number} 255.255.255.255
+  no shutdown
+interface GigabitEthernet0/0
+  description iosv-r1 Gi0/0
+  ip address ${format("%s %s", cidrhost(l0_prefix, 1), cidrnetmask(l0_prefix))} 
+  ip nat inside
+  no shutdown
+interface GigabitEthernet0/1
+  mtu ${internet_mtu}
+  ip address 100.64.1.${pod_number} 255.255.255.0
+  no shutdown
+interface Tunnel1
+  tunnel source GigabitEthernet0/1
+  tunnel destination 100.64.2.2
+  ip address ${global_ipv4_address} 255.255.255.255
+  ipv6 address ${format("%s", cidrhost(format("%s/%s", global_ipv6_prefix, global_ipv6_prefix_length), 0)) }/128
+  ipv6 enable
+  ip nat outside
+ip access-list extended NAT
+   permit ip ${cidrhost(ip_prefix, 0)} ${wildcard_mask[16]} any
+ip nat inside source list NAT interface GigabitEthernet0/2 overload
+ip route 100.64.2.2 255.255.255.255 100.64.1.254
+ip route 0.0.0.0 0.0.0.0 Tunnel1
+ipv6 route ::/0 Tunnel1
+!ip route ${ format("%s %s %s", cidrhost(l2_prefix, 0), cidrnetmask(l2_prefix), cidrhost(l0_prefix, 1)) }
+ip http server
 no banner exec
 no banner login
 no banner motd
+crypto key generate rsa modulus 2048
 end

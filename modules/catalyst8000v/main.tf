@@ -33,6 +33,26 @@ resource "google_compute_subnetwork" "c8k_subnet" {
   #}
 }
 
+data "google_compute_network" "cml_network" {
+  name = var.cfg.cml.network_name
+}
+
+resource "google_compute_network_peering" "c8k_to_cml_peering" {
+  name                 = "c8k-to-cml-peering"
+  network              = google_compute_network.c8k_network.self_link
+  peer_network         = data.google_compute_network.cml_network.self_link
+  stack_type           = "IPV4_IPV6"
+  import_custom_routes = true
+}
+
+resource "google_compute_network_peering" "cml_to_c8k_peering" {
+  name                 = "cml-to-c8k-peering"
+  network              = data.google_compute_network.cml_network.self_link
+  peer_network         = google_compute_network.c8k_network.self_link
+  stack_type           = "IPV4_IPV6"
+  export_custom_routes = true
+}
+
 resource "google_tags_tag_key" "c8k_tag_network_key" {
   parent      = "projects/${var.cfg.gcp.project}"
   short_name  = "C8K Network"
@@ -58,6 +78,16 @@ resource "google_project_iam_member" "c8k_service_account_iam_member" {
   project = var.cfg.gcp.project
   role    = "roles/iam.serviceAccountUser"
   member  = "serviceAccount:${google_service_account.c8k_service_account.email}"
+}
+
+data "google_storage_bucket" "bah_machine_images" {
+  name = "bah-machine-images"
+}
+
+resource "google_storage_bucket_iam_member" "c8k_service_account_storage_iam_member" {
+  bucket = data.google_storage_bucket.bah_machine_images.name
+  role   = "roles/storage.objectUser"
+  member = "serviceAccount:${google_service_account.c8k_service_account.email}"
 }
 
 resource "google_compute_region_network_firewall_policy" "c8k_firewall_policy" {
@@ -274,7 +304,7 @@ resource "google_compute_instance" "c8k_instance" {
   metadata = {
     block-project-ssh-keys = true
     block-project-ssh-keys = try(var.cfg.gcp.ssh_keys != null) ? true : false
-    ssh-keys = try(var.cfg.gcp.ssh_keys != null) ? var.cfg.gcp.ssh_keys : null
+    ssh-keys               = try(var.cfg.gcp.ssh_keys != null) ? var.cfg.gcp.ssh_keys : null
     # Not user-data, use startup-script
     startup-script     = local.c8k_startup_script
     serial-port-enable = true

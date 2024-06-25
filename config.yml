@@ -66,6 +66,9 @@ c8k:
     - "64.100.197.0/24"
     - "64.100.220.0/23"
 
+cml:
+  network_name: cml-network
+
 secret:
   # At this time, 'vault', 'conjur' and 'dummy' are supported secrets managers.
   # Make sure that you also run the prepare.sh / prepare.bat script, otherwise

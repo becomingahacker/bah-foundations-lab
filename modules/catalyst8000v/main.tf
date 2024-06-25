@@ -345,7 +345,7 @@ resource "google_compute_address" "c8k_ipv6_pod_prefix" {
 resource "google_compute_region_health_check" "c8k_tcp_port_80_health_check" {
   name = "c8k-tcp-port-80-health-check"
 
-  timeout_sec         = 1
+  timeout_sec         = 5
   check_interval_sec  = 5
   healthy_threshold   = 4
   unhealthy_threshold = 5
@@ -355,7 +355,7 @@ resource "google_compute_region_health_check" "c8k_tcp_port_80_health_check" {
   }
 
   log_config {
-    enable = false
+    enable = true
   }
 }
 
@@ -376,7 +376,7 @@ resource "google_compute_region_backend_service" "c8k_backend_service" {
   connection_draining_timeout_sec = 300
 
   log_config {
-    enable = false
+    enable = true
   }
 }
 

@@ -3,11 +3,17 @@ hostname ioll2-xe-sw1
 ip domain name ${domain_name}
 ip name-server ${v4_name_server}
 cdp enable
+no ip routing
+interface Vlan1
+  ip address dhcp
+  no shutdown
 interface Ethernet0/0
   description iosv-r1 Gi0/0
+  spanning-tree portfast
   no shutdown
 interface Ethernet0/1
   description kali Eth0
+  spanning-tree portfast
   no shutdown
 interface Ethernet0/2
   description unused

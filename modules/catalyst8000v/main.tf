@@ -271,19 +271,11 @@ resource "google_compute_instance" "c8k_instance" {
     scopes = ["cloud-platform"]
   }
 
-  # Can log in
-  #metadata = {
-  #  block-project-ssh-keys = true
-  #  #block-project-ssh-keys = try(var.cfg.gcp.ssh_keys != null) ? true : false
-  #  ssh-keys               = try(var.cfg.gcp.ssh_keys != null) ? var.cfg.gcp.ssh_keys : null
-  #  user-data              = local.c8k_user_data
-  #  serial-port-enable     = true
-  #}
   metadata = {
     block-project-ssh-keys = true
-    #block-project-ssh-keys = try(var.cfg.gcp.ssh_keys != null) ? true : false
+    block-project-ssh-keys = try(var.cfg.gcp.ssh_keys != null) ? true : false
     ssh-keys = try(var.cfg.gcp.ssh_keys != null) ? var.cfg.gcp.ssh_keys : null
-    # Not user-data!
+    # Not user-data, use startup-script
     startup-script     = local.c8k_startup_script
     serial-port-enable = true
   }
@@ -312,7 +304,7 @@ resource "google_compute_address" "c8k_ipv4_pod_address" {
 
 resource "google_compute_address" "c8k_ipv6_pod_prefix" {
   count              = var.cfg.pod_count
-  name               = "c8k-pod-prefix-${count.index}"
+  name               = "c8k-ipv6-pod-prefix-${count.index}"
   address_type       = "EXTERNAL"
   ip_version         = "IPV6"
   ipv6_endpoint_type = "NETLB"

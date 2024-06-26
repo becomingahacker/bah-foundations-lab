@@ -302,7 +302,6 @@ resource "google_compute_instance" "c8k_instance" {
   }
 
   metadata = {
-    block-project-ssh-keys = true
     block-project-ssh-keys = try(var.cfg.gcp.ssh_keys != null) ? true : false
     ssh-keys               = try(var.cfg.gcp.ssh_keys != null) ? var.cfg.gcp.ssh_keys : null
     # Not user-data, use startup-script

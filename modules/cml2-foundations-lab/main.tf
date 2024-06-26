@@ -82,6 +82,24 @@ resource "cml2_node" "iosv-r1" {
   configuration  = local.iosv_r2_config
 }
 
+resource "cml2_node" "metasploitable" {
+  lab_id         = cml2_lab.foundations_lab.id
+  label          = "metasploitable"
+  nodedefinition = "metasploitable"
+  x              = 0
+  y              = 200
+  tags           = ["host"]
+  }
+  
+resource "cml2_node" "windows" {
+  lab_id         = cml2_lab.foundations_lab.id
+  label          = "windows"
+  nodedefinition = "windows"
+  x              = 120
+  y              = 200
+  tags           = ["host"]
+}
+
 resource "cml2_node" "ext-conn-0" {
   lab_id         = cml2_lab.foundations_lab.id
   label          = "Internet"
@@ -97,7 +115,6 @@ resource "cml2_link" "l0" {
   lab_id = cml2_lab.foundations_lab.id
   node_a = cml2_node.kali.id
   node_b = cml2_node.ioll2-xe-sw1.id
-  #node_b = cml2_node.ext-conn-0.id
   slot_a = 0
   slot_b = 1
 }
@@ -118,6 +135,22 @@ resource "cml2_link" "l2" {
   slot_b = 0
 }
 
+resource "cml2_link" "l3" {
+  lab_id = cml2_lab.foundations_lab.id
+  node_a = cml2_node.metasploitable.id
+  node_b = cml2_node.ioll2-xe-sw1.id
+  slot_a = 0
+  slot_b = 2
+}
+
+resource "cml2_link" "l4" {
+  lab_id = cml2_lab.foundations_lab.id
+  node_a = cml2_node.windows.id
+  node_b = cml2_node.ioll2-xe-sw1.id
+  slot_a = 0
+  slot_b = 3
+}
+
 resource "cml2_lifecycle" "top" {
   lab_id = cml2_lab.foundations_lab.id
 
@@ -130,6 +163,8 @@ resource "cml2_lifecycle" "top" {
     cml2_link.l0.id,
     cml2_link.l1.id,
     cml2_link.l2.id,
+    cml2_link.l3.id,
+    cml2_link.l4.id,
   ]
 
   staging = {

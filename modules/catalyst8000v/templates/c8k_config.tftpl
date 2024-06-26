@@ -4,6 +4,8 @@ hostname ${cfg.c8k.hostname}
 !
 ipv6 unicast-routing
 !
+cdp run
+!
 interface Loopback0
  ip address 100.64.0.255 255.255.255.255
 !
@@ -24,6 +26,7 @@ interface Tunnel${(pod)+1}
  tunnel source GigabitEthernet1
  tunnel destination 100.64.1.${(pod)+1}
  ipv6 enable 
+ cdp enable
  exit
 !
 ip route ${pod_ipv4_addresses[pod]} 255.255.255.255 Tunnel${(pod)+1}

@@ -22,6 +22,7 @@ interface Tunnel1
   ipv6 enable
   tunnel source GigabitEthernet0/1
   tunnel destination 100.64.2.2
+  cdp enable
 interface GigabitEthernet0/0
   description ioll2-xe-sw1 E0/0
   ip address ${format("%s %s", cidrhost(l0_prefix, 1), cidrnetmask(l0_prefix))} 

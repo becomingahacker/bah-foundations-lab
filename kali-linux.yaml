@@ -23,7 +23,7 @@ sim:
     libvirt_domain_driver: kvm
     driver: server
     disk_driver: virtio
-    ram: 12288
+    ram: 16384
     cpus: 2
     cpu_limit: 100
     boot_disk_size: 64

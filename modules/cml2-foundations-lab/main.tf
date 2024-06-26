@@ -52,7 +52,7 @@ resource "cml2_node" "kali" {
   lab_id         = cml2_lab.foundations_lab.id
   label          = "kali"
   nodedefinition = "kali-linux"
-  ram            = 8192
+  ram            = 16384
   boot_disk_size = 64
   x              = 80
   y              = 120

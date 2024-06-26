@@ -409,3 +409,19 @@ resource "google_compute_forwarding_rule" "c8k_forwarding_rule_v6" {
   load_balancing_scheme = "EXTERNAL"
   all_ports             = true
 }
+
+data "google_dns_managed_zone" "c8k_zone" {
+  name = var.cfg.gcp.dns_zone_name
+}
+
+resource "google_dns_record_set" "c8k_dns" {
+  name     = "${var.cfg.c8k.hostname}.${data.google_dns_managed_zone.c8k_zone.dns_name}"
+  type     = "A"
+  ttl      = 300
+
+  managed_zone = data.google_dns_managed_zone.c8k_zone.name
+
+  rrdatas = [
+    google_compute_address.c8k_address_external.address
+  ]
+}

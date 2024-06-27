@@ -17,6 +17,10 @@ runcmd:
   - chown -R cisco:cisco /home/cisco
   - dpkg-reconfigure xorg
   - systemctl enable --now getty@ttyS1
+  - mv /provision/websploit /root/websploit
+  - mkdir -vp /root/becoming-a-hacker
+  - tar xzvf /provision/becoming-a-hacker/labs/bah-labs.tar.gz -C /root/becoming-a-hacker
+  - tar xzvf /provision/becoming-a-hacker/wifisim/wifisim-v1.0.tar.gz -C /opt
 
 #bootcmd:
 #  - true

@@ -8,17 +8,23 @@ ip cef
 ipv6 unicast-routing
 ipv6 cef
 ip dhcp pool KALI
-  dns-server ${v4_name_server}
+  ! dns-server ${v4_name_server}
+  ! HACK cmm - fixed for now
+  dns-server 10.1.1.5
   domain-name ${domain_name}
   network ${format("%s %s", cidrhost(l0_prefix, 1), cidrnetmask(l0_prefix))}
   default-router ${format("%s", cidrhost(l0_prefix, 1))}
+!
+ip dhcp excluded-address 10.1.1.1
+ip dhcp excluded-address 10.1.1.3 10.1.1.10
 !
 interface Loopback0
   ip address 100.64.0.${pod_number} 255.255.255.255
 interface Tunnel1
   ip address ${global_ipv4_address} 255.255.255.255
   ip nat outside
-  ipv6 address ${format("%s", cidrhost(format("%s/%s", global_ipv6_prefix, global_ipv6_prefix_length), 0)) }/128
+  ! last host in prefix
+  ipv6 address ${format("%s", cidrhost(format("%s/%s", global_ipv6_prefix, global_ipv6_prefix_length), 4294967295)) }/128
   ipv6 enable
   tunnel source GigabitEthernet0/1
   tunnel destination 100.64.2.2

@@ -5,7 +5,8 @@ ip name-server ${v4_name_server}
 cdp enable
 no ip routing
 interface Vlan1
-  ip address dhcp
+  ! HACK cmm - fixed for now
+  ip address 10.1.1.6 255.255.255.0
   no shutdown
 interface Ethernet0/0
   description iosv-r1 Gi0/0

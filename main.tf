@@ -51,7 +51,9 @@ module "pod" {
   global_ipv6_prefix        = module.catalyst8000v.pod_ipv6_prefix[count.index]
   global_ipv6_prefix_length = module.catalyst8000v.pod_ipv6_prefix_length
   internet_mtu              = module.catalyst8000v.internet_mtu
-  domain_name               = format("bahf-pod%d.%s", count.index + 1, local.cfg.domain_name)
+  # HACK - use the same domain name for all pods
+  #domain_name               = format("bahf-pod%d.%s", count.index + 1, local.cfg.domain_name)
+  domain_name               = format("pod.%s", local.cfg.domain_name)
 }
 
 module "group" {

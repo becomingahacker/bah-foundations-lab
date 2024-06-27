@@ -36,10 +36,10 @@ provider "google" {
 }
 
 provider "cml2" {
-  address        = "https://${local.cfg.lb_fqdn}"
+  address        = "https://cml-controller.becomingahacker.com"
   username       = local.cfg.secrets.app.username
   password       = local.cfg.secrets.app.secret
   use_cache      = false
-  skip_verify    = false
+  skip_verify    = true
   dynamic_config = true
 }

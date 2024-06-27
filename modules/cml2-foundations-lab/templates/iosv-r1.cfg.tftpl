@@ -67,7 +67,8 @@ interface GigabitEthernet0/3
   speed auto
   media-type rj45
 ip access-list extended NAT
-   permit ip ${cidrhost(ip_prefix, 0)} ${wildcard_mask[16]} any
+   ! permit ip ${cidrhost(ip_prefix, 0)} ${wildcard_mask[16]} any
+   permit ip 10.1.1.0 0.0.0.255 any
 ip nat inside source list NAT interface Tunnel1 overload
 ip route 100.64.2.2 255.255.255.255 100.64.1.254
 ip route 0.0.0.0 0.0.0.0 Tunnel1

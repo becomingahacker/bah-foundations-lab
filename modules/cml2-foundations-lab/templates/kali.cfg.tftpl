@@ -13,14 +13,29 @@ users:
     lock_passwd: false
 
 runcmd:
+  # HACK cmm , integrate
+  - rm /etc/systemd/system/networking.service.d/timeout.conf
   # Change ownership of /home/cisco to cisco
   - chown -R cisco:cisco /home/cisco
   - dpkg-reconfigure xorg
   - systemctl enable --now getty@ttyS1
   - mv /provision/websploit /root/websploit
   - mkdir -vp /root/becoming-a-hacker
+  # TODO cmm - Fix Scapy scripts from python2 to python3
   - tar xzvf /provision/becoming-a-hacker/labs/bah-labs.tar.gz -C /root/becoming-a-hacker
   - tar xzvf /provision/becoming-a-hacker/wifisim/wifisim-v1.0.tar.gz -C /opt
+  - chown -R 'root:root' /opt/wifisim
+  - cp /opt/wifisim/wifisimd /etc/init.d
+  - systemctl enable wifisimd.service
+  - systemctl start wifisimd.service
+  - systemctl enable atftpd.service
+  - systemctl start atftpd.service
+  - tar xzvf /provision/becoming-a-hacker/labs/jre1.6.0_45.tar.gz -C /root/becoming-a-hacker/labs/web-apps 
+  - unzip /root/becoming-a-hacker/labs/web-apps/jboss-5.1.0.GA.zip -d /root/becoming-a-hacker/labs/web-apps
+  - chown -R 'root:root' /root/becoming-a-hacker
+  - mv /root/becoming-a-hacker/labs /root
+  - rmdir /root/becoming-a-hacker
+  - mv /root/labs /root/becoming-a-hacker
 
 #bootcmd:
 #  - true

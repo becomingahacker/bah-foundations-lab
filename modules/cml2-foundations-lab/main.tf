@@ -168,7 +168,8 @@ resource "cml2_lifecycle" "top" {
   ]
 
   staging = {
-    stages          = ["external_connector", "router", "host"]
+    #stages          = ["external_connector", "router", "host"]
+    stages          = []
     start_remaining = true
   }
 

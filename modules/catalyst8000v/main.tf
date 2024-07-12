@@ -266,6 +266,10 @@ resource "google_compute_instance" "c8k_instance" {
   machine_type              = var.cfg.c8k.machine_type
   allow_stopping_for_update = true
 
+  labels = {
+    allow_public_ip_address = "true"
+  }
+
   params {
     resource_manager_tags = {
       (google_tags_tag_key.c8k_tag_network_key.id) = google_tags_tag_value.c8k_tag_network_c8k.id

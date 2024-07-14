@@ -94,7 +94,7 @@ resource "cml2_node" "metasploitable" {
 resource "cml2_node" "windows" {
   lab_id         = cml2_lab.foundations_lab.id
   label          = "windows"
-  nodedefinition = "windows"
+  nodedefinition = "windows-xp"
   x              = 120
   y              = 200
   tags           = ["host"]

@@ -312,6 +312,13 @@ resource "google_compute_instance" "c8k_instance" {
     startup-script     = local.c8k_startup_script
     serial-port-enable = true
   }
+
+  scheduling {
+    preemptible = true
+    automatic_restart = false
+    provisioning_model = "SPOT"
+    instance_termination_action = "TERMINATE"
+  }
 }
 
 resource "google_compute_network_endpoint_group" "c8k_network_endpoint_group" {

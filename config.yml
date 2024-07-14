@@ -27,7 +27,7 @@ gcp:
   bucket: bah-machine-images
   # Machines will inherit the SSH keys from project's metadata for all users unless you provide below
   # <user>:<ssh public key>
-  # e.g. ssh_key: "cml:ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGDAqIBESzn9J9rdSLarhyU6GNycV+43DkdkNzSgfLrP"
+  # e.g. ssh_keys: "cml:ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGDAqIBESzn9J9rdSLarhyU6GNycV+43DkdkNzSgfLrP"
   # HACK cmm - the Catalyst 8000v doesn't use project-level metadata.  It needs explicit keys.
   ssh_keys: |
     stieng:ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHCgsKQbtqJBMB1fDhwyuI1IDJYf2mfkVADmwfvuXqpt stieng@cisco.com
@@ -40,7 +40,7 @@ gcp:
 
 c8k:
   image: cisco-c8k-17-14-01a
-  machine_type: n1-standard-4
+  machine_type: n1-standard-2
   disk_size_gb: 16
   hostname: bah-c8k
   network_name: cml-network

@@ -315,9 +315,9 @@ resource "google_compute_instance" "c8k_instance" {
 
   scheduling {
     preemptible = true
-    automatic_restart = false
+    automatic_restart = true
     provisioning_model = "SPOT"
-    instance_termination_action = "TERMINATE"
+    instance_termination_action = "STOP"
   }
 }
 
@@ -387,6 +387,7 @@ resource "google_compute_region_backend_service" "c8k_backend_service" {
 
   log_config {
     enable = true
+    sample_rate = 0.05
   }
 }
 

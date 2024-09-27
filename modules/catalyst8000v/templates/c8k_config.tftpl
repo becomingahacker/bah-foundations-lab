@@ -24,7 +24,7 @@ interface GigabitEthernet1
 interface Tunnel${(pod)+1}
  ip unnumbered Loopback0
  tunnel source GigabitEthernet1
- tunnel destination 100.64.1.${(pod)+1}
+ tunnel destination 100.64.5.${(pod)+1}
  ipv6 enable 
  cdp enable
  exit

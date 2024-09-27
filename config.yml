@@ -43,7 +43,7 @@ c8k:
   machine_type: n1-standard-2
   disk_size_gb: 16
   hostname: bah-c8k
-  network_name: cml-network
+  network_name: cml-c8k-network
   subnet_name: bahf-c8k-subnet
   subnet_cidr: 100.64.2.0/24
   service_account_id: bah-foundations
@@ -69,7 +69,8 @@ c8k:
     - "64.100.220.0/23"
 
 cml:
-  network_name: cml-network
+  # May need to be updated
+  network_name: cml-network-ebe76604
 
 secret:
   # At this time, 'vault', 'conjur' and 'dummy' are supported secrets managers.

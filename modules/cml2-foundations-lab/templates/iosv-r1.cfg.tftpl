@@ -50,7 +50,7 @@ interface GigabitEthernet0/0
 interface GigabitEthernet0/1
   description Internet
   mtu ${internet_mtu}
-  ip address 100.64.1.${pod_number} 255.255.255.0
+  ip address 100.64.5.${pod_number} 255.255.255.0
   duplex auto
   speed auto
   media-type rj45
@@ -70,7 +70,7 @@ ip access-list extended NAT
    ! permit ip ${cidrhost(ip_prefix, 0)} ${wildcard_mask[16]} any
    permit ip 10.1.1.0 0.0.0.255 any
 ip nat inside source list NAT interface Tunnel1 overload
-ip route 100.64.2.2 255.255.255.255 100.64.1.254
+ip route 100.64.2.2 255.255.255.255 100.64.5.254
 ip route 0.0.0.0 0.0.0.0 Tunnel1
 ipv6 route ::/0 Tunnel1
 router rip

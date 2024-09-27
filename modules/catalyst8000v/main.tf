@@ -13,7 +13,7 @@ locals {
 }
 
 resource "google_compute_network" "c8k_network" {
-  name                    = "c8k-network"
+  name                    = var.cfg.c8k.network_name
   auto_create_subnetworks = false
   mtu                     = 8896
 }
@@ -190,7 +190,7 @@ resource "google_compute_region_network_firewall_policy_rule" "c8k_firewall_rule
   rule_name       = "c8k-firewall-rule-gre"
 
   match {
-    src_ip_ranges = ["100.64.1.0/24"]
+    src_ip_ranges = ["100.64.5.0/24"]
 
     layer4_configs {
       ip_protocol = 47

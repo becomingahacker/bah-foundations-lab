@@ -1,13 +1,13 @@
 Section: IOS configuration 
 !
-hostname ${cfg.c8k.hostname}
+hostname ${hostname}
 !
 ipv6 unicast-routing
 !
 cdp run
 !
 interface Loopback0
- ip address 100.64.0.255 255.255.255.255
+ ip address ${loopback_ipv4_address} 255.255.255.255
 !
 !
 interface GigabitEthernet1
@@ -20,7 +20,7 @@ interface GigabitEthernet1
   ipv6 nd autoconfig default-route
   ipv6 nd ra suppress all
 !
-%{ for pod in range(cfg.pod_count) }
+%{ for pod in range(pod_count) }
 interface Tunnel${(pod)+1}
  ip unnumbered Loopback0
  tunnel source GigabitEthernet1

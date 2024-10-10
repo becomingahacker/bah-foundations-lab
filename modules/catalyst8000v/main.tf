@@ -5,11 +5,10 @@
 #
 
 locals {
-  c8k_startup_script = templatefile("${path.module}/templates/c8k_config.tftpl", {
-    cfg                = var.cfg
-    pod_ipv4_addresses = google_compute_address.c8k_ipv4_pod_address[*].address
-    pod_ipv6_prefixes  = google_compute_address.c8k_ipv6_pod_prefix[*].address
-  })
+}
+
+data "google_compute_zones" "c8k_zones_available" {
+  region = var.cfg.gcp.region
 }
 
 resource "google_compute_network" "c8k_network" {
@@ -249,38 +248,66 @@ resource "google_compute_region_network_firewall_policy_rule" "c8k_firewall_rule
 }
 
 resource "google_compute_address" "c8k_address_internal" {
-  name         = "c8k-address-internal"
+  count        = var.cfg.c8k.instance_count
+  name         = "c8k-address-internal-${count.index}"
   address_type = "INTERNAL"
   purpose      = "GCE_ENDPOINT"
   subnetwork   = google_compute_subnetwork.c8k_subnet.id
-  address      = "100.64.2.2"
+  address      = cidrhost(var.cfg.c8k.subnet_cidr, 2 + count.index)
 }
 
 resource "google_compute_address" "c8k_address_external" {
-  name         = "c8k-address-external"
+  count        = var.cfg.c8k.instance_count
+  name         = "c8k-address-external-${count.index}"
   address_type = "EXTERNAL"
 }
 
-resource "google_compute_instance" "c8k_instance" {
-  name                      = "bahf-c8k" # var.cfg.c8k.hostname
-  machine_type              = var.cfg.c8k.machine_type
-  allow_stopping_for_update = true
+resource "google_compute_region_per_instance_config" "c8k_instance_config" {
+  count                         = var.cfg.c8k.instance_count
+  region_instance_group_manager = google_compute_region_instance_group_manager.c8k_compute_region_instance_group_manager.name
+  name                          = "${var.cfg.c8k.hostname_prefix}-${count.index}"
 
-  labels = {
-    allow_public_ip_address = "true"
-  }
-
-  params {
-    resource_manager_tags = {
-      (google_tags_tag_key.c8k_tag_network_key.id) = google_tags_tag_value.c8k_tag_network_c8k.id
+  preserved_state {
+    metadata = {
+      # Not user-data, use startup-script
+      startup-script = templatefile("${path.module}/templates/c8k_config.tftpl", {
+        hostname              = "${var.cfg.c8k.hostname_prefix}-${count.index}"
+        loopback_ipv4_address = cidrhost(var.cfg.c8k.loopback_ipv4_prefix, -count.index)
+        pod_count             = var.cfg.pod_count
+        pod_ipv4_addresses    = google_compute_address.c8k_ipv4_pod_address[*].address
+        pod_ipv6_prefixes     = google_compute_address.c8k_ipv6_pod_prefix[*].address
+      })
+      # Adding a reference to the instance template used causes the stateful instance to update
+      # if the instance template changes. Otherwise there is no explicit dependency and template
+      # changes may not occur on the stateful instance
+      instance_template = google_compute_region_instance_template.c8k_compute_region_instance_template.self_link
+    }
+    internal_ip {
+      interface_name = "nic0"
+      ip_address {
+        address = google_compute_address.c8k_address_internal[count.index].self_link
+      }
+    }
+    external_ip {
+      interface_name = "nic0"
+      ip_address {
+        address = google_compute_address.c8k_address_external[count.index].self_link
+      }
     }
   }
+}
 
-  boot_disk {
-    initialize_params {
-      image = var.cfg.c8k.image
-      size  = var.cfg.c8k.disk_size_gb
-    }
+resource "google_compute_region_instance_template" "c8k_compute_region_instance_template" {
+  name_prefix  = "bahf-c8k"
+  machine_type = var.cfg.c8k.machine_type
+
+  resource_manager_tags = {
+    (google_tags_tag_key.c8k_tag_network_key.id) = google_tags_tag_value.c8k_tag_network_c8k.id
+  }
+
+  disk {
+    source_image = var.cfg.c8k.image
+    disk_size_gb = var.cfg.c8k.disk_size_gb
   }
 
   # Use machine as a router & disable source address checking
@@ -289,11 +316,6 @@ resource "google_compute_instance" "c8k_instance" {
   network_interface {
     network    = google_compute_network.c8k_network.id
     subnetwork = google_compute_subnetwork.c8k_subnet.id
-    network_ip = google_compute_address.c8k_address_internal.address
-
-    access_config {
-      nat_ip = google_compute_address.c8k_address_external.address
-    }
     ipv6_access_config {
       network_tier = "PREMIUM"
     }
@@ -308,33 +330,118 @@ resource "google_compute_instance" "c8k_instance" {
   metadata = {
     block-project-ssh-keys = try(var.cfg.gcp.ssh_keys != null) ? true : false
     ssh-keys               = try(var.cfg.gcp.ssh_keys != null) ? var.cfg.gcp.ssh_keys : null
-    # Not user-data, use startup-script
-    startup-script     = local.c8k_startup_script
-    serial-port-enable = true
+    serial-port-enable     = true
+  }
+
+  lifecycle {
+    create_before_destroy = false
   }
 
   scheduling {
-    preemptible = true
-    automatic_restart = false
-    provisioning_model = "SPOT"
+    preemptible                 = true
+    automatic_restart           = false
+    provisioning_model          = "SPOT"
     instance_termination_action = "STOP"
   }
 }
 
-resource "google_compute_network_endpoint_group" "c8k_network_endpoint_group" {
-  name                  = "c8k-lb-neg"
-  network               = google_compute_network.c8k_network.id
-  subnetwork            = google_compute_subnetwork.c8k_subnet.id
-  zone                  = var.cfg.gcp.zone
-  network_endpoint_type = "GCE_VM_IP"
+resource "google_compute_region_instance_group_manager" "c8k_compute_region_instance_group_manager" {
+
+  name = "c8k-instance-group-manager"
+
+  base_instance_name = "bahf-c8k"
+
+  distribution_policy_zones        = slice(
+    [for zone in data.google_compute_zones.c8k_zones_available.names : zone], 
+    0, 
+    min(var.cfg.c8k.instance_count, length(data.google_compute_zones.c8k_zones_available.names)))
+  distribution_policy_target_shape = "EVEN"
+
+  update_policy {
+    type                         = "OPPORTUNISTIC"
+    instance_redistribution_type = "NONE"
+    minimal_action               = "REPLACE"
+    max_surge_fixed = length(data.google_compute_zones.c8k_zones_available.names)
+  }
+
+  all_instances_config {
+    labels = {
+      allow_public_ip_address = "true"
+    }
+  }
+
+  stateful_external_ip {
+    interface_name = "nic0"
+  }
+  stateful_external_ip {
+    interface_name = "nic0"
+  }
+
+  version {
+    instance_template = google_compute_region_instance_template.c8k_compute_region_instance_template.id
+  }
+
+  target_size = var.cfg.c8k.instance_count
 }
 
-resource "google_compute_network_endpoint" "c8k_network_endpoint" {
-  network_endpoint_group = google_compute_network_endpoint_group.c8k_network_endpoint_group.name
-
-  instance   = google_compute_instance.c8k_instance.name
-  ip_address = google_compute_instance.c8k_instance.network_interface[0].network_ip
-}
+#resource "google_compute_instance" "c8k_instance" {
+#  name                      = "bahf-c8k"               # var.cfg.c8k.hostname #DONE
+#  machine_type              = var.cfg.c8k.machine_type #DONE
+#  allow_stopping_for_update = true                     #DONE
+#
+#  labels = { #DONE
+#    allow_public_ip_address = "true"
+#  }
+#
+#  params { #DONE
+#    resource_manager_tags = {
+#      (google_tags_tag_key.c8k_tag_network_key.id) = google_tags_tag_value.c8k_tag_network_c8k.id
+#    }
+#  }
+#
+#  boot_disk {
+#    initialize_params {
+#      image = var.cfg.c8k.image
+#      size  = var.cfg.c8k.disk_size_gb
+#    }
+#  }
+#
+#  # Use machine as a router & disable source address checking
+#  can_ip_forward = true
+#
+#  network_interface {
+#    network    = google_compute_network.c8k_network.id
+#    subnetwork = google_compute_subnetwork.c8k_subnet.id
+#    network_ip = google_compute_address.c8k_address_internal.address
+#
+#    access_config {
+#      nat_ip = google_compute_address.c8k_address_external.address
+#    }
+#    ipv6_access_config {
+#      network_tier = "PREMIUM"
+#    }
+#    stack_type = "IPV4_IPV6"
+#  }
+#
+#  service_account {
+#    email  = google_service_account.c8k_service_account.email
+#    scopes = ["cloud-platform"]
+#  }
+#
+#  metadata = {
+#    block-project-ssh-keys = try(var.cfg.gcp.ssh_keys != null) ? true : false
+#    ssh-keys               = try(var.cfg.gcp.ssh_keys != null) ? var.cfg.gcp.ssh_keys : null
+#    # Not user-data, use startup-script
+#    serial-port-enable = true
+#  }
+#
+#  scheduling {
+#    preemptible                 = true
+#    automatic_restart           = false
+#    provisioning_model          = "SPOT"
+#    instance_termination_action = "STOP"
+#  }
+#}
 
 resource "google_compute_address" "c8k_ipv4_pod_address" {
   count        = var.cfg.pod_count
@@ -380,13 +487,13 @@ resource "google_compute_region_backend_service" "c8k_backend_service" {
   region                = var.cfg.gcp.region
 
   backend {
-    group          = google_compute_network_endpoint_group.c8k_network_endpoint_group.id
+    group          = google_compute_region_instance_group_manager.c8k_compute_region_instance_group_manager.id
     balancing_mode = "CONNECTION"
   }
   connection_draining_timeout_sec = 300
 
   log_config {
-    enable = true
+    enable      = true
     sample_rate = 0.05
   }
 }
@@ -444,13 +551,14 @@ data "google_dns_managed_zone" "c8k_zone" {
 }
 
 resource "google_dns_record_set" "c8k_dns" {
-  name     = "${var.cfg.c8k.hostname}.${data.google_dns_managed_zone.c8k_zone.dns_name}"
-  type     = "A"
-  ttl      = 300
+  count = var.cfg.c8k.instance_count
+  name  = "${var.cfg.c8k.hostname_prefix}-${count.index}.${data.google_dns_managed_zone.c8k_zone.dns_name}"
+  type  = "A"
+  ttl   = 300
 
   managed_zone = data.google_dns_managed_zone.c8k_zone.name
 
   rrdatas = [
-    google_compute_address.c8k_address_external.address
+    google_compute_address.c8k_address_external[count.index].address
   ]
 }

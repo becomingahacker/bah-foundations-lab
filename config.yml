@@ -9,6 +9,8 @@
 #
 
 pod_count: 3
+# TODO cmm
+max_pod_count: 15
 
 # Becoming a Hacker Load Balancer FQDN
 lb_fqdn: becomingahacker.com
@@ -39,13 +41,17 @@ gcp:
   dns_zone_name: becomingahacker-com
 
 c8k:
+  instance_count: 2
   image: cisco-c8k-17-14-01a
   machine_type: n1-standard-2
   disk_size_gb: 16
-  hostname: bah-c8k
+  hostname_prefix: bah-c8k
   network_name: cml-c8k-network
   subnet_name: bahf-c8k-subnet
   subnet_cidr: 100.64.2.0/24
+  # The loopback IP address prefix for the Catalyst 8000v instances.  Uses the last IPs first to make room
+  # for pod loopback addresses
+  loopback_ipv4_prefix: 100.64.0.0/24
   service_account_id: bah-foundations
   service_account_display_name: "Becoming a Hacker Foundations Pod Service Account"
   allowed_ipv4_subnets:

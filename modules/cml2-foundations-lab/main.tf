@@ -89,8 +89,8 @@ resource "cml2_node" "metasploitable" {
   x              = 0
   y              = 200
   tags           = ["host"]
-  }
-  
+}
+
 resource "cml2_node" "windows" {
   lab_id         = cml2_lab.foundations_lab.id
   label          = "windows"

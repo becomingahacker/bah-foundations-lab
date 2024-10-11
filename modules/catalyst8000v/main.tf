@@ -262,6 +262,17 @@ resource "google_compute_address" "c8k_address_external" {
   address_type = "EXTERNAL"
 }
 
+# TODO cmm - Only IPv4 is supported for stateful configs.  IPv6 is currently ephemeral.
+#resource "google_compute_address" "c8k_address_external_v6" {
+#  count              = var.cfg.c8k.instance_count
+#  name               = "c8k-address-external-v6-${count.index}"
+#  address_type       = "EXTERNAL"
+#  purpose            = "GCE_ENDPOINT"
+#  ip_version         = "IPV6"
+#  ipv6_endpoint_type = "VM"
+#  subnetwork         = google_compute_subnetwork.c8k_subnet.id
+#}
+
 resource "google_compute_region_per_instance_config" "c8k_instance_config" {
   count                         = var.cfg.c8k.instance_count
   region_instance_group_manager = google_compute_region_instance_group_manager.c8k_compute_region_instance_group_manager.name
@@ -272,7 +283,7 @@ resource "google_compute_region_per_instance_config" "c8k_instance_config" {
       # Not user-data, use startup-script
       startup-script = templatefile("${path.module}/templates/c8k_config.tftpl", {
         hostname              = "${var.cfg.c8k.hostname_prefix}-${count.index}"
-        loopback_ipv4_address = cidrhost(var.cfg.c8k.loopback_ipv4_prefix, -count.index)
+        loopback_ipv4_address = cidrhost(var.cfg.c8k.loopback_ipv4_prefix, -count.index - 1)
         pod_count             = var.cfg.pod_count
         pod_ipv4_addresses    = google_compute_address.c8k_ipv4_pod_address[*].address
         pod_ipv6_prefixes     = google_compute_address.c8k_ipv6_pod_prefix[*].address
@@ -290,6 +301,7 @@ resource "google_compute_region_per_instance_config" "c8k_instance_config" {
     }
     external_ip {
       interface_name = "nic0"
+      # Only IPv4 is supported for stateful configs.  IPv6 is ephemeral.
       ip_address {
         address = google_compute_address.c8k_address_external[count.index].self_link
       }
@@ -351,17 +363,14 @@ resource "google_compute_region_instance_group_manager" "c8k_compute_region_inst
 
   base_instance_name = "bahf-c8k"
 
-  distribution_policy_zones        = slice(
-    [for zone in data.google_compute_zones.c8k_zones_available.names : zone], 
-    0, 
-    min(var.cfg.c8k.instance_count, length(data.google_compute_zones.c8k_zones_available.names)))
+  distribution_policy_zones        = [for zone in data.google_compute_zones.c8k_zones_available.names : zone]
   distribution_policy_target_shape = "EVEN"
 
   update_policy {
     type                         = "OPPORTUNISTIC"
     instance_redistribution_type = "NONE"
     minimal_action               = "REPLACE"
-    max_surge_fixed = length(data.google_compute_zones.c8k_zones_available.names)
+    max_unavailable_fixed        = length(data.google_compute_zones.c8k_zones_available.names)
   }
 
   all_instances_config {
@@ -370,18 +379,20 @@ resource "google_compute_region_instance_group_manager" "c8k_compute_region_inst
     }
   }
 
+  # TODO cmm - Monitor IP address usage
   stateful_external_ip {
     interface_name = "nic0"
+    delete_rule    = "NEVER"
   }
-  stateful_external_ip {
+
+  stateful_internal_ip {
     interface_name = "nic0"
+    delete_rule    = "NEVER"
   }
 
   version {
     instance_template = google_compute_region_instance_template.c8k_compute_region_instance_template.id
   }
-
-  target_size = var.cfg.c8k.instance_count
 }
 
 #resource "google_compute_instance" "c8k_instance" {
@@ -487,7 +498,7 @@ resource "google_compute_region_backend_service" "c8k_backend_service" {
   region                = var.cfg.gcp.region
 
   backend {
-    group          = google_compute_region_instance_group_manager.c8k_compute_region_instance_group_manager.id
+    group          = google_compute_region_instance_group_manager.c8k_compute_region_instance_group_manager.instance_group
     balancing_mode = "CONNECTION"
   }
   connection_draining_timeout_sec = 300

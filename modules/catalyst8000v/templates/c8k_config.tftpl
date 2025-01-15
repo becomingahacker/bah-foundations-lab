@@ -31,8 +31,15 @@ interface Tunnel${(pod)+1}
 !
 ip route ${pod_ipv4_addresses[pod]} 255.255.255.255 Tunnel${(pod)+1}
 ipv6 route ${pod_ipv6_prefixes[pod]}/96  Tunnel${(pod)+1}
-ip route 100.64.0.${(pod)+1} 255.255.255.255 Tunnel${(pod)+1}
+ip route 10.64.0.${(pod)+1} 255.255.255.255 Tunnel${(pod)+1}
 %{ endfor }
+! HACK cmm - experiment with /64 prefix in a pod
+ipv6 route 2602:80A:F004:101::/64 Tunnel1
 !
+no ip http server
+no ip http secure-server
 !
 end
+
+Section: License
+techpackage:network-advantage

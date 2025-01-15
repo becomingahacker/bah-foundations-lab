@@ -277,6 +277,7 @@ resource "google_compute_region_per_instance_config" "c8k_instance_config" {
   count                         = var.cfg.c8k.instance_count
   region_instance_group_manager = google_compute_region_instance_group_manager.c8k_compute_region_instance_group_manager.name
   name                          = "${var.cfg.c8k.hostname_prefix}-${count.index}"
+  minimal_action                = "REPLACE"
 
   preserved_state {
     metadata = {
@@ -346,7 +347,7 @@ resource "google_compute_region_instance_template" "c8k_compute_region_instance_
   }
 
   lifecycle {
-    create_before_destroy = false
+    create_before_destroy = true
   }
 
   scheduling {
@@ -370,6 +371,7 @@ resource "google_compute_region_instance_group_manager" "c8k_compute_region_inst
     type                         = "OPPORTUNISTIC"
     instance_redistribution_type = "NONE"
     minimal_action               = "REPLACE"
+    replacement_method           = "RECREATE"
     max_unavailable_fixed        = length(data.google_compute_zones.c8k_zones_available.names)
   }
 
@@ -379,7 +381,7 @@ resource "google_compute_region_instance_group_manager" "c8k_compute_region_inst
     }
   }
 
-  # TODO cmm - Monitor IP address usage
+  # IPv4 external and internal work as expected.  IPv6 external is ephemeral, and changes as instances are replaced.
   stateful_external_ip {
     interface_name = "nic0"
     delete_rule    = "NEVER"

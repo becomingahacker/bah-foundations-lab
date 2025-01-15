@@ -42,16 +42,18 @@ gcp:
 
 c8k:
   instance_count: 2
-  image: cisco-c8k-17-14-01a
+  # gcloud compute images list --project cisco-public
+  # gcloud compute images create cisco-c8k-17-16-01a --source-image projects/cisco-public/global/images/cisco-c8k-17-16-01a
+  image: cisco-c8k-17-16-01a
   machine_type: n1-standard-2
   disk_size_gb: 16
   hostname_prefix: bah-c8k
   network_name: cml-c8k-network
   subnet_name: bahf-c8k-subnet
-  subnet_cidr: 100.64.2.0/24
+  subnet_cidr: 10.64.2.0/24
   # The loopback IP address prefix for the Catalyst 8000v instances.  Uses the last IPs first to make room
   # for pod loopback addresses
-  loopback_ipv4_prefix: 100.64.0.0/24
+  loopback_ipv4_prefix: 10.64.0.0/24
   service_account_id: bah-foundations
   service_account_display_name: "Becoming a Hacker Foundations Pod Service Account"
   allowed_ipv4_subnets:
@@ -76,7 +78,7 @@ c8k:
 
 cml:
   # May need to be updated
-  network_name: cml-network-ebe76604
+  network_name: cml-network-d207450b
 
 secret:
   # At this time, 'vault', 'conjur' and 'dummy' are supported secrets managers.

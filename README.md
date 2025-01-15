@@ -53,6 +53,48 @@ terraform output -json | jq .cml_credentials.value
 > If the pod is not defined, it will get a randomly-generated password based on
 > [`random_pet`](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/pet).
 
+## Bring your own IPv6
+
+The Terraform provider doesn't currently support `ipCollection`, which is 
+used for [BYOIP](https://cloud.google.com/vpc/docs/bring-your-own-ip).
+
+https://github.com/hashicorp/terraform-provider-google/issues/18407
+
+We already have PAPs and PDPs set up in `ASIG-BAH-GCP`.  Unfortunately you need
+to use the `gcloud` command to setup forwarding rules for IPv6, pointing
+to the Catalyst 8000vs, after the playbook is run.  There needs to be a 
+forwarding rule for every pod.
+
+Becoming a Hacker Foundations has a `/56` 
+[delegated to it](https://console.cloud.google.com/networking/byoip/list?invt=Abms5A&project=gcp-asigbahgcp-nprd-47930).
+The first prefix is used for the C8Ks 
+
+* `2602:80a:f004:100::/56`
+
+TODO cmm - Document this better, or is it possible to use 
+[a REST provider](https://github.com/Mastercard/terraform-provider-restapi)?
+
+```
+$ gcloud compute forwarding-rules describe c8k-backend-service-forwarding-rule
+IPAddress: 2602:80a:f004:100:0:0:0:0/64
+IPProtocol: L3_DEFAULT
+allPorts: true
+backendService: https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/regions/us-east1/backendServices/c8k-backend-service
+creationTimestamp: '2024-12-23T10:07:43.751-08:00'
+description: ''
+fingerprint: LJVk0-NU-rg=
+id: '7880219789510318080'
+ipCollection: https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/regions/us-east1/publicDelegatedPrefixes/nlb-2602-80a-f004-100-56
+ipVersion: IPV6
+kind: compute#forwardingRule
+labelFingerprint: 42WmSpB8rSM=
+loadBalancingScheme: EXTERNAL
+name: c8k-backend-service-forwarding-rule
+networkTier: PREMIUM
+region: https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/regions/us-east1
+selfLink: https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/regions/us-east1/forwardingRules/c8k-backend-service-forwarding-rule
+```
+
 ## Start Labs
 
 * You can either ask the students to start the labs themselves, or you can start

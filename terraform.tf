@@ -8,15 +8,15 @@ terraform {
   required_providers {
     cml2 = {
       source  = "CiscoDevNet/cml2"
-      version = "~>0.7.0"
+      version = "~>0.8.0"
     }
     google = {
       source  = "hashicorp/google"
-      version = ">=5.28.0"
+      version = ">=6.17.0"
     }
     cloudinit = {
       source  = "hashicorp/cloudinit"
-      version = ">=2.3.3"
+      version = ">=2.3.5"
     }
   }
 
@@ -39,7 +39,6 @@ provider "cml2" {
   address        = "https://cml-controller.becomingahacker.com"
   username       = local.cfg.secrets.app.username
   password       = local.cfg.secrets.app.secret
-  use_cache      = false
   skip_verify    = true
   dynamic_config = true
 }

@@ -154,18 +154,6 @@ resource "cml2_link" "l4" {
 resource "cml2_lifecycle" "top" {
   lab_id = cml2_lab.foundations_lab.id
 
-  # the elements list has the dependencies
-  elements = [
-    cml2_node.kali.id,
-    cml2_node.ioll2-xe-sw1.id,
-    cml2_node.iosv-r1.id,
-    cml2_node.ext-conn-0.id,
-    cml2_link.l0.id,
-    cml2_link.l1.id,
-    cml2_link.l2.id,
-    cml2_link.l3.id,
-    cml2_link.l4.id,
-  ]
 
   staging = {
     #stages          = ["external_connector", "router", "host"]
@@ -180,4 +168,16 @@ resource "cml2_lifecycle" "top" {
       state
     ]
   }
+
+  depends_on = [
+    cml2_node.kali,
+    cml2_node.ioll2-xe-sw1,
+    cml2_node.iosv-r1,
+    cml2_node.ext-conn-0,
+    cml2_link.l0,
+    cml2_link.l1,
+    cml2_link.l2,
+    cml2_link.l3,
+    cml2_link.l4,
+  ]
 }

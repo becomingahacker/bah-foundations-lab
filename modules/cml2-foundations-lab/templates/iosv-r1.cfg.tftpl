@@ -102,11 +102,14 @@ router bgp 65001
  address-family ipv4 unicast
   network ${global_ipv4_address} mask 255.255.255.255
   neighbor 100.64.5.254 activate
+  neighbor 100.64.5.254 allowas-in 1
   neighbor 2600:1900:4020:745::1:ffff activate
+  neighbor 2600:1900:4020:745::1:ffff allowas-in 1
  address-family ipv6 unicast
   network ${format("%s", cidrhost(format("%s/%s", global_ipv6_prefix, global_ipv6_prefix_length), 0)) }/128
   aggregate-address ${format("%s/%s", global_ipv6_prefix, global_ipv6_prefix_length)} as-set summary-only
   neighbor 2600:1900:4020:745::1:ffff activate
+  neighbor 2600:1900:4020:745::1:ffff allowas-in 1
 ip http server
 no banner exec
 no banner login

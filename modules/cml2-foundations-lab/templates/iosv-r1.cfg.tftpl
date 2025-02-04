@@ -53,6 +53,8 @@ interface GigabitEthernet0/0
   ipv6 nd managed-config-flag
   ipv6 enable
   ipv6 dhcp server KALI
+  ipv6 rip DEFAULT enable
+  ipv6 rip DEFAULT default-information originate
 interface GigabitEthernet0/1
   description Internet
   mtu ${internet_mtu}
@@ -88,6 +90,7 @@ router rip
  network 100.64.0.0
  passive-interface GigabitEthernet0/1
  no auto-summary
+ipv6 router rip DEFAULT
 router bgp 65001
  bgp router-id 10.64.0.${pod_number}
  bgp log-neighbor-changes

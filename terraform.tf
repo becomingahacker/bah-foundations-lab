@@ -36,9 +36,9 @@ provider "google" {
 }
 
 provider "cml2" {
-  address        = "https://cml-controller.becomingahacker.com"
+  address        = "https://becomingahacker.com"
   username       = local.cfg.secrets.app.username
   password       = local.cfg.secrets.app.secret
-  skip_verify    = true
+  skip_verify    = false
   dynamic_config = true
 }

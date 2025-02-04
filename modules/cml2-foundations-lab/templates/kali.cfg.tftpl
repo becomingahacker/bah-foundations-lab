@@ -41,6 +41,12 @@ runcmd:
 #  - true
 
 write_files:
+  # Enable IPv6 on eth0
+  - path: /etc/network/interfaces.d/eth0
+    content: |
+      auto eth0
+      iface eth0 inet dhcp
+      iface eth0 inet6 dhcp
   # Change the screen resolution to 1440x900 for more room
   - path: /home/cisco/.config/xfce4/xfconf/xfce-perchannel-xml/displays.xml
     content: |

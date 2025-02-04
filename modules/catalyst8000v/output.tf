@@ -15,7 +15,3 @@ output "pod_ipv6_prefix" {
 output "pod_ipv6_prefix_length" {
   value = 96
 }
-
-output "internet_mtu" {
-  value = google_compute_network.c8k_network.mtu
-}

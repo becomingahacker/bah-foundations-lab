@@ -2,6 +2,9 @@ no service config
 hostname ioll2-xe-sw1
 ip domain name ${domain_name}
 ip name-server ${v4_name_server}
+%{ if v6_name_server != "" }
+ip name-server ${v6_name_server}
+%{ endif }
 cdp enable
 no ip routing
 interface Vlan1

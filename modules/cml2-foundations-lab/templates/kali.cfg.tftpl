@@ -41,12 +41,19 @@ runcmd:
 #  - true
 
 write_files:
-  # Enable IPv6 on eth0
-  - path: /etc/network/interfaces.d/eth0
+  # Enable IPv4 static and DHCPv6 on eth0
+  - path: /etc/network/interfaces
     content: |
       auto eth0
-      iface eth0 inet dhcp
+      iface eth0 inet static
+        address 10.1.1.2
+        netmask 255.255.255.0
+        gateway 10.1.1.1
+        dns-nameserver 10.1.1.5
+        dns-search pod.becomingahacker.com
+
       iface eth0 inet6 dhcp
+
   # Change the screen resolution to 1440x900 for more room
   - path: /home/cisco/.config/xfce4/xfconf/xfce-perchannel-xml/displays.xml
     content: |

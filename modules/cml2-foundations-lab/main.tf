@@ -5,8 +5,10 @@
 #
 
 locals {
-  v4_name_server = "169.254.169.254" # GCP DNS
-  v6_name_server = "2620:0:ccc::2"   # OpenDNS IPv6
+  #v4_name_server = "169.254.169.254" # GCP DNS
+  v4_name_server = "10.1.1.5" # Local metasploitable instance
+  #v6_name_server = "2620:0:ccc::2"   # OpenDNS IPv6
+  v6_name_server = ""
   l0_prefix      = cidrsubnet(var.ip_prefix, 8, 1)
   l1_prefix      = cidrsubnet(var.ip_prefix, 8, 2)
 
@@ -23,6 +25,7 @@ locals {
   iosv_r1_config = templatefile("${path.module}/templates/ioll2-xe-sw1.cfg.tftpl", {
     domain_name    = var.domain_name,
     v4_name_server = local.v4_name_server,
+    v6_name_server = local.v6_name_server,
     l0_prefix      = local.l1_prefix,
     l2_prefix      = local.l0_prefix,
   })
@@ -86,6 +89,7 @@ resource "cml2_node" "metasploitable" {
   lab_id         = cml2_lab.foundations_lab.id
   label          = "metasploitable"
   nodedefinition = "metasploitable"
+  imagedefinition = "metasploitable-20250221"
   x              = 0
   y              = 200
   tags           = ["host"]
@@ -95,6 +99,7 @@ resource "cml2_node" "windows" {
   lab_id         = cml2_lab.foundations_lab.id
   label          = "windows"
   nodedefinition = "windows-xp"
+  imagedefinition = "windows-xp-20250222"
   x              = 120
   y              = 200
   tags           = ["host"]
@@ -156,8 +161,7 @@ resource "cml2_lifecycle" "top" {
 
 
   staging = {
-    #stages          = ["external_connector", "router", "host"]
-    stages          = []
+    stages          = ["external_connector", "router", "switch", "host"]
     start_remaining = true
   }
 

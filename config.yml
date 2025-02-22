@@ -9,8 +9,6 @@
 #
 
 pod_count: 4
-# TODO cmm
-max_pod_count: 25
 
 # Becoming a Hacker Load Balancer FQDN
 lb_fqdn: becomingahacker.com

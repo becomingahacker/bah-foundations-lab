@@ -41,4 +41,5 @@ provider "cml2" {
   password       = local.cfg.secrets.app.secret
   skip_verify    = false
   dynamic_config = true
+  named_configs  = true
 }

@@ -61,7 +61,12 @@ resource "cml2_node" "kali" {
   x              = 80
   y              = 120
   tags           = ["host"]
-  configuration  = local.kali_config
+  configurations = [
+    {
+      name    = "user-data"
+      content = local.kali_config
+    },
+  ]
 }
 
 resource "cml2_node" "ioll2-xe-sw1" {

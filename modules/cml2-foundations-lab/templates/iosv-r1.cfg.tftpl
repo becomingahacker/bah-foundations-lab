@@ -92,20 +92,20 @@ router bgp 65001
  bgp log-neighbor-changes
  neighbor 100.64.5.254 remote-as 65000
  ! FIXME cmm - templatize me
- neighbor 2600:1900:4020:745::1:ffff remote-as 65000
- neighbor 2600:1900:4020:745::1:ffff disable-connected-check
- neighbor 2600:1900:4020:745::1:ffff ttl-security hops 2
+ neighbor ${bgp_ipv6_peer} remote-as 65000
+ neighbor ${bgp_ipv6_peer} disable-connected-check
+ neighbor ${bgp_ipv6_peer} ttl-security hops 2
  address-family ipv4 unicast
   network ${global_ipv4_address} mask 255.255.255.255
   neighbor 100.64.5.254 activate
   neighbor 100.64.5.254 allowas-in 1
-  neighbor 2600:1900:4020:745::1:ffff activate
-  neighbor 2600:1900:4020:745::1:ffff allowas-in 1
+  neighbor ${bgp_ipv6_peer} activate
+  neighbor ${bgp_ipv6_peer} allowas-in 1
  address-family ipv6 unicast
   network ${format("%s", cidrhost(format("%s/%s", global_ipv6_prefix, global_ipv6_prefix_length), 0)) }/128
   aggregate-address ${format("%s/%s", global_ipv6_prefix, global_ipv6_prefix_length)} as-set summary-only
-  neighbor 2600:1900:4020:745::1:ffff activate
-  neighbor 2600:1900:4020:745::1:ffff allowas-in 1
+  neighbor ${bgp_ipv6_peer} activate
+  neighbor ${bgp_ipv6_peer} allowas-in 1
 ip http server
 no banner exec
 no banner login

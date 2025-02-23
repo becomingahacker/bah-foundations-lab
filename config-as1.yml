@@ -22,8 +22,8 @@ gcp:
   # gcloud auth application-default login  Leave empty in this case.
   credentials:
   project: gcp-asigbahgcp-nprd-47930
-  region: us-east1
-  zone: us-east1-b
+  region: asia-south1
+  zone: asia-south1-a
   bucket: bah-machine-images
   ## Machines will inherit the SSH keys from project's metadata for all users unless you provide below
   ## <user>:<ssh public key>
@@ -77,9 +77,9 @@ c8k:
 
 cml:
   # WARNING: These may all need to be updated to match deployment
-  network_name: cml-network-1b821f70
-  subnet_name: cml-controller-subnet-1b821f70
-  lab_network_endpoint_group_self_link: "https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/zones/us-east1-b/networkEndpointGroups/cml-controller-lab-neg-1b821f70"
+  network_name: cml-network-55267dbe
+  subnet_name: cml-controller-subnet-55267dbe
+  lab_network_endpoint_group_self_link: "https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/zones/asia-south1-a/networkEndpointGroups/cml-controller-lab-neg-55267dbe"
   bgp_ipv6_peer: "2600:1900:40a0:4de::1:ffff"
 
 secret:

@@ -465,7 +465,7 @@ resource "google_compute_address" "c8k_ipv4_pod_address" {
 
 data "google_compute_subnetwork" "c8k_subnet" {
   # FIXME cmm - this is a hack to get the subnet ID from the CML controller
-  name = "cml-controller-subnet-1b821f70"
+  name = var.cfg.cml.subnet_name
 }
 
 resource "google_compute_address" "c8k_ipv6_pod_prefix" {
@@ -506,8 +506,7 @@ resource "google_compute_region_backend_service" "c8k_backend_service" {
   region                = var.cfg.gcp.region
 
   backend {
-    # HACK cmm
-    group          = "https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/zones/us-east1-b/networkEndpointGroups/cml-controller-lab-neg-1b821f70"
+    group          = var.cfg.cml.lab_network_endpoint_group_self_link
     balancing_mode = "CONNECTION"
   }
   connection_draining_timeout_sec = 300

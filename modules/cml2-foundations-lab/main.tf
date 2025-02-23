@@ -42,6 +42,7 @@ locals {
     global_ipv4_address       = var.global_ipv4_address,
     global_ipv6_prefix        = var.global_ipv6_prefix,
     global_ipv6_prefix_length = var.global_ipv6_prefix_length,
+    bgp_ipv6_peer             = var.bgp_ipv6_peer,
   })
 }
 
@@ -86,23 +87,23 @@ resource "cml2_node" "iosv-r1" {
 }
 
 resource "cml2_node" "metasploitable" {
-  lab_id         = cml2_lab.foundations_lab.id
-  label          = "metasploitable"
-  nodedefinition = "metasploitable"
+  lab_id          = cml2_lab.foundations_lab.id
+  label           = "metasploitable"
+  nodedefinition  = "metasploitable"
   imagedefinition = "metasploitable-20250221"
-  x              = 0
-  y              = 200
-  tags           = ["host"]
+  x               = 0
+  y               = 200
+  tags            = ["host"]
 }
 
 resource "cml2_node" "windows" {
-  lab_id         = cml2_lab.foundations_lab.id
-  label          = "windows"
-  nodedefinition = "windows-xp"
+  lab_id          = cml2_lab.foundations_lab.id
+  label           = "windows"
+  nodedefinition  = "windows-xp"
   imagedefinition = "windows-xp-20250222"
-  x              = 120
-  y              = 200
-  tags           = ["host"]
+  x               = 120
+  y               = 200
+  tags            = ["host"]
 }
 
 resource "cml2_node" "ext-conn-0" {

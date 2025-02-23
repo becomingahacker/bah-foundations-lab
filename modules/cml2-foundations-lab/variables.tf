@@ -43,3 +43,8 @@ variable "domain_name" {
   type        = string
   description = "IP prefix for the pod"
 }
+
+variable "bgp_ipv6_peer" {
+  type        = string
+  description = "BGP IPv6 peer address (of CML virbr1)"
+}

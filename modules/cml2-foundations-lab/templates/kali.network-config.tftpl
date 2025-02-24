@@ -1,0 +1,14 @@
+# FIXME cmm - This doesn't work with the current image because
+# /etc/cloud/cloud.cfg.d/99_disable_networking_config.cfg is 
+# present.
+network:
+  version: 2
+  ethernets:
+    eth0:
+      dhcp4: false
+      addresses:
+        - 10.1.1.2/24
+      gateway4: 10.1.1.1
+      nameservers:
+        search: [foo.local, bar.local]
+        addresses: [8.8.8.8]

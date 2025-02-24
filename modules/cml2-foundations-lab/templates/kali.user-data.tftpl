@@ -13,6 +13,8 @@ users:
     lock_passwd: false
 
 runcmd:
+  - set -x
+  - ifdown eth0 && ifup eth0
   # HACK cmm , integrate
   - rm /etc/systemd/system/networking.service.d/timeout.conf
   # Change ownership of /home/cisco to cisco
@@ -42,7 +44,7 @@ runcmd:
 
 write_files:
   # Enable IPv4 static and DHCPv6 on eth0
-  - path: /etc/network/interfaces
+  - path: /etc/network/interfaces.d/eth0
     content: |
       auto eth0
       iface eth0 inet static

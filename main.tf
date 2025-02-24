@@ -53,8 +53,8 @@ module "pod" {
   bgp_ipv6_peer             = local.cfg.cml.bgp_ipv6_peer
   internet_mtu              = 1500
   # HACK - use the same domain name for all pods
-  #domain_name               = format("bahf-pod%d.%s", count.index + 1, local.cfg.domain_name)
-  domain_name = format("pod.%s", local.cfg.domain_name)
+  #pod_domain_name               = format("bahf-pod%d.%s", count.index + 1, local.cfg.domain_name)
+  domain_name = local.cfg.pod_domain_name
 }
 
 module "group" {

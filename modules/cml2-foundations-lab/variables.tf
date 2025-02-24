@@ -41,7 +41,7 @@ variable "internet_mtu" {
 
 variable "domain_name" {
   type        = string
-  description = "IP prefix for the pod"
+  description = "Domain name for the pod"
 }
 
 variable "bgp_ipv6_peer" {

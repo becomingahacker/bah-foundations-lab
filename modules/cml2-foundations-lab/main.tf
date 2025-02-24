@@ -16,7 +16,13 @@ locals {
     domain_name = var.domain_name,
   })
 
-  kali_config = templatefile("${path.module}/templates/kali.cfg.tftpl", {
+  kali_user_data = templatefile("${path.module}/templates/kali.user-data.tftpl", {
+    domain_name    = var.domain_name,
+    v4_name_server = local.v4_name_server,
+    l0_prefix      = local.l0_prefix,
+  })
+
+  kali_network_config = templatefile("${path.module}/templates/kali.network-config.tftpl", {
     domain_name    = var.domain_name,
     v4_name_server = local.v4_name_server,
     l0_prefix      = local.l0_prefix,
@@ -64,7 +70,11 @@ resource "cml2_node" "kali" {
   configurations = [
     {
       name    = "user-data"
-      content = local.kali_config
+      content = local.kali_user_data
+    },
+    {
+      name    = "network-config"
+      content = local.kali_network_config
     },
   ]
 }
@@ -76,7 +86,7 @@ resource "cml2_node" "ioll2-xe-sw1" {
   ram            = 768
   x              = 280
   y              = 120
-  tags           = ["switch"]
+  tags           = ["network"]
   configuration  = local.iosv_r1_config
 }
 
@@ -87,7 +97,7 @@ resource "cml2_node" "iosv-r1" {
   ram            = 768
   x              = 480
   y              = 120
-  tags           = ["router"]
+  tags           = ["network"]
   configuration  = local.iosv_r2_config
 }
 
@@ -167,10 +177,12 @@ resource "cml2_lifecycle" "top" {
 
 
   staging = {
-    stages          = ["external_connector", "router", "switch", "host"]
+    stages          = ["external_connector", "network", "host"]
     start_remaining = true
   }
 
+  # Start in order, according to stages
+  #state = "STARTED"
   state = "DEFINED_ON_CORE"
 
   lifecycle {

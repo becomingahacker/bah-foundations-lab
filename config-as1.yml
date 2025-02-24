@@ -9,6 +9,7 @@
 #
 
 pod_count: 4
+pod_domain_name: pod.becomingahacker.com
 
 # Becoming a Hacker Load Balancer FQDN
 lb_fqdn: becomingahacker.com

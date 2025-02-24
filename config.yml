@@ -9,6 +9,7 @@
 #
 
 pod_count: 4
+pod_domain_name: pod.becomingahacker.com
 
 # Becoming a Hacker Load Balancer FQDN
 lb_fqdn: becomingahacker.com
@@ -117,4 +118,3 @@ secret:
       path: sto/becomingahacker/secret/common/becomingahacker.com/prod/host/cml-0.becomingahacker.com/admin_password
       # Used with Vault only:
       #field: secret
-

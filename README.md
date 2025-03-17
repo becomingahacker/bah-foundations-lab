@@ -53,46 +53,102 @@ terraform output -json | jq .cml_credentials.value
 > If the pod is not defined, it will get a randomly-generated password based on
 > [`random_pet`](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/pet).
 
-## Bring your own IPv6
+## Bring your own IPv4
 
-The Terraform provider doesn't currently support `ipCollection`, which is 
-used for [BYOIP](https://cloud.google.com/vpc/docs/bring-your-own-ip).
+We already have PAPs and PDPs set up in `ASIG-BAH-GCP`.  There needs to be a 
+forwarding rule for every `/32`.
 
-https://github.com/hashicorp/terraform-provider-google/issues/18407
+Becoming a Hacker Foundations has one `/28`
+[delegated to it](https://console.cloud.google.com/networking/byoip/list?invt=Abms5A&project=gcp-asigbahgcp-nprd-47930) in `us-east1`:
 
-We already have PAPs and PDPs set up in `ASIG-BAH-GCP`.  Unfortunately you need
-to use the `gcloud` command to setup forwarding rules for IPv6, pointing
-to the Catalyst 8000vs, after the playbook is run.  There needs to be a 
-forwarding rule for every pod.
+* `172.98.19.240/28`
 
-Becoming a Hacker Foundations has a `/56` 
-[delegated to it](https://console.cloud.google.com/networking/byoip/list?invt=Abms5A&project=gcp-asigbahgcp-nprd-47930).
-The first prefix is used for the C8Ks 
-
-* `2602:80a:f004:100::/56`
-
-TODO cmm - Document this better, or is it possible to use 
-[a REST provider](https://github.com/Mastercard/terraform-provider-restapi)?
+Example using gloud CLI:
 
 ```
-$ gcloud compute forwarding-rules describe c8k-backend-service-forwarding-rule
-IPAddress: 2602:80a:f004:100:0:0:0:0/64
-IPProtocol: L3_DEFAULT
-allPorts: true
-backendService: https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/regions/us-east1/backendServices/c8k-backend-service
-creationTimestamp: '2024-12-23T10:07:43.751-08:00'
+$ gcloud compute public-delegated-prefixes describe sub-172-98-19-240-28
+byoipApiVersion: V2
+creationTimestamp: '2025-03-14T14:31:25.815-07:00'
 description: ''
-fingerprint: LJVk0-NU-rg=
-id: '7880219789510318080'
-ipCollection: https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/regions/us-east1/publicDelegatedPrefixes/nlb-2602-80a-f004-100-56
-ipVersion: IPV6
-kind: compute#forwardingRule
-labelFingerprint: 42WmSpB8rSM=
-loadBalancingScheme: EXTERNAL
-name: c8k-backend-service-forwarding-rule
-networkTier: PREMIUM
+fingerprint: Bjex8Votv0g=
+id: '7360803315358703298'
+ipCidrRange: 172.98.19.240/28
+kind: compute#publicDelegatedPrefix
+name: sub-172-98-19-240-28
+parentPrefix: https://www.googleapis.com/compute/v1/projects/gcp-asigaurynbyoipg-nprd-33190/regions/us-east1/publicDelegatedPrefixes/pdp-172-98-19-240-28
+publicDelegatedSubPrefixs:
+- delegateeProject: gcp-asigbahgcp-nprd-47930
+  description: ''
+  ipCidrRange: 172.98.19.240/28
+  isAddress: true
+  name: sub-172-98-19-240-28-addresses
+  region: us-east1
+  status: ACTIVE
 region: https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/regions/us-east1
-selfLink: https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/regions/us-east1/forwardingRules/c8k-backend-service-forwarding-rule
+selfLink: https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/regions/us-east1/publicDelegatedPrefixes/sub-172-98-19-240-28
+status: ANNOUNCED_TO_INTERNET
+```
+
+```
+for i in `seq 240 255`
+do 
+  gcloud compute forwarding-rules create --ip-protocol=L3_DEFAULT \
+    --ports=ALL \
+    --backend-service="projects/gcp-asigbahgcp-nprd-47930/regions/us-east1/backendServices/c8k-backend-service" \
+    --ip-version=IPV4 \
+    --load-balancing-scheme=EXTERNAL \
+    --network-tier=PREMIUM \
+    --region=us-east1 \
+    --address=172.98.19.$i \
+    fr-172-98-19-$i
+done
+```
+
+## Bring your own IPv6
+
+We already have PAPs and PDPs set up in `ASIG-BAH-GCP`.  There needs to be a 
+forwarding rule for every `/64`.
+
+Becoming a Hacker Foundations has two `/56`s
+[delegated to it](https://console.cloud.google.com/networking/byoip/list?invt=Abms5A&project=gcp-asigbahgcp-nprd-47930) in `us-east1`:
+
+* `2602:80a:f004:100::/56`
+* `2602:80a:f004:200::/56`
+
+Example using gloud CLI:
+
+```
+$ gcloud compute public-delegated-prefixes describe nlb-2602-80a-f004-100-56
+allocatablePrefixLength: 64
+byoipApiVersion: V2
+creationTimestamp: '2025-03-16T16:47:52.097-07:00'
+description: ''
+fingerprint: EGVdzQREMEQ=
+id: '4107084448669556167'
+ipCidrRange: 2602:80a:f004:100::/56
+kind: compute#publicDelegatedPrefix
+mode: EXTERNAL_IPV6_FORWARDING_RULE_CREATION
+name: nlb-2602-80a-f004-100-56
+parentPrefix: https://www.googleapis.com/compute/v1/projects/gcp-asigaurynbyoipg-nprd-33190/regions/us-east1/publicDelegatedPrefixes/sub-2602-80a-f004-100-56
+region: https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/regions/us-east1
+selfLink: https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/regions/us-east1/publicDelegatedPrefixes/nlb-2602-80a-f004-100-56
+status: ANNOUNCED_TO_INTERNET
+```
+
+```
+for i in `seq 100 105`
+do 
+  gcloud compute forwarding-rules create --ip-protocol=L3_DEFAULT \
+    --ports=ALL \
+    --backend-service="projects/gcp-asigbahgcp-nprd-47930/regions/us-east1/backendServices/c8k-backend-service" \
+    --ip-version=IPV6 \
+    --load-balancing-scheme=EXTERNAL \
+    --network-tier=PREMIUM \
+    --region=us-east1 \
+    --ip-collection="nlb-2602-80a-f004-100-56" \
+    --address="2602:80a:f004:${i}::/64" \
+    fr-2602-80a-f004-${i}-64
+done
 ```
 
 ## Start Labs

@@ -468,15 +468,15 @@ data "google_compute_subnetwork" "c8k_subnet" {
   name = var.cfg.cml.subnet_name
 }
 
-resource "google_compute_address" "c8k_ipv6_pod_prefix" {
-  count              = var.cfg.pod_count
-  name               = "c8k-ipv6-pod-prefix-${count.index}"
-  address_type       = "EXTERNAL"
-  ip_version         = "IPV6"
-  ipv6_endpoint_type = "NETLB"
-  prefix_length      = 96
-  subnetwork         = data.google_compute_subnetwork.c8k_subnet.id
-}
+#resource "google_compute_address" "c8k_ipv6_pod_prefix" {
+#  count              = var.cfg.pod_count
+#  name               = "c8k-ipv6-pod-prefix-${count.index}"
+#  address_type       = "EXTERNAL"
+#  ip_version         = "IPV6"
+#  ipv6_endpoint_type = "NETLB"
+#  prefix_length      = 96
+#  subnetwork         = data.google_compute_subnetwork.c8k_subnet.id
+#}
 
 resource "google_compute_region_health_check" "c8k_tcp_port_80_health_check" {
   name = "c8k-tcp-port-80-health-check"
@@ -531,38 +531,33 @@ resource "google_compute_forwarding_rule" "c8k_forwarding_rule_v4" {
   all_ports             = true
 }
 
-# IPv6 pod forwarding rule - Edge router IPv6 prefix
-resource "google_compute_forwarding_rule" "c8k_forwarding_rule_v6" {
-  count                 = var.cfg.pod_count
-  name                  = "c8k-forwarding-rule-ipv6-${count.index}"
-  backend_service       = google_compute_region_backend_service.c8k_backend_service.id
-  region                = var.cfg.gcp.region
-  network_tier          = "PREMIUM"
-  ip_version            = "IPV6"
-  ip_protocol           = "L3_DEFAULT"
-  ip_address            = google_compute_address.c8k_ipv6_pod_prefix[count.index].id
-  subnetwork            = data.google_compute_subnetwork.c8k_subnet.id
-  load_balancing_scheme = "EXTERNAL"
-  all_ports             = true
-}
-
-# TODO cmm - ipCollection isn't supported on the IPv6 forwarding rules. 
-# https://github.com/hashicorp/terraform-provider-google/issues/18407
-# IPv6 pod forwarding rule - Main link IPv6 prefix, BYOIPv6
-#resource "google_compute_forwarding_rule" "c8k_forwarding_rule_byoipv6" {
+## IPv6 pod forwarding rule - Edge router IPv6 prefix
+#resource "google_compute_forwarding_rule" "c8k_forwarding_rule_v6" {
 #  count                 = var.cfg.pod_count
-#  name                  = "c8k-forwarding-rule-byoipv6-${count.index}"
+#  name                  = "c8k-forwarding-rule-ipv6-${count.index}"
 #  backend_service       = google_compute_region_backend_service.c8k_backend_service.id
 #  region                = var.cfg.gcp.region
 #  network_tier          = "PREMIUM"
 #  ip_version            = "IPV6"
 #  ip_protocol           = "L3_DEFAULT"
-# TODO cmm - needs count
-#  ip_address            = "2602:80a:f004:102::/64"
+#  ip_address            = google_compute_address.c8k_ipv6_pod_prefix[count.index].id
+#  subnetwork            = data.google_compute_subnetwork.c8k_subnet.id
 #  load_balancing_scheme = "EXTERNAL"
 #  all_ports             = true
-#  ip_collection         = "projects/gcp-asigbahgcp-nprd-47930/regions/us-east1/publicDelegatedPrefixes/nlb-2602-80a-f004-100-56"
 #}
+
+resource "google_compute_forwarding_rule" "c8k_forwarding_rule_byoipv6" {
+  count                 = var.cfg.pod_count
+  name                  = "c8k-forwarding-rule-byoipv6-${count.index}"
+  backend_service       = google_compute_region_backend_service.c8k_backend_service.id
+  region                = var.cfg.gcp.region
+  network_tier          = "PREMIUM"
+  ip_version            = "IPV6"
+  ip_protocol           = "L3_DEFAULT"
+  load_balancing_scheme = "EXTERNAL"
+  all_ports             = true
+  ip_collection         = var.cfg.gcp.byoip_ipv6_ip_collection
+}
 
 #data "google_dns_managed_zone" "c8k_zone" {
 #  name = var.cfg.gcp.dns_zone_name

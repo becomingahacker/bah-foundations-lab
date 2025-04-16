@@ -38,6 +38,7 @@ gcp:
   #  nweigand:ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKh/PoDlHZ784blTY39txDUsQaI6nzdE53CjngwYM5MD nweigand@cisco.com
   #  jallbrit:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDJX9lBCF2q+wkZviWilVjN7tPxja7wLYowfS8UncpkGITkPVnXcRPZzX4xeJVvoCCSjNuR+tdE7bQluMogrzZ9kKwW7vtzq95OYPbsZsOXEo9apzha2pMhQnVQWuUrME+v46TNo6jI2VGYgCV9J8puoQCTIimE0kZi2FT8/f2Qu6h/wNm3mWKsCUoZbtWK3NBrrYGpvgJkFCccJSnl7aTdOvem1PKbqg492vh4MI7ejPyBrOLGTF0oxFneLtXk0sPG8nTee0vzJrr930bS0lm77GSv+DPMiZ+De1zFGOqK6uPmLUUhfCfAMEXhghcZNKJmcmw9Jl290tqi8NMmlFp7XJ9TGXLiU1HpimRBMshkmUpdfxOwUZgVuON3yJ7KsxHKf1IfEcT1O3uDkjDOTB73NGoAu0tAJFqF9vZmxFMvp/aL1eje+ysLpqT+pBUueR55IWrmaQkOeO4Hxp/uMkX6EqLL4FP/Tsm87gkJaGGBs2/gv5cMC5E+a6K88afzk00= jallbrit@cisco.com
   dns_zone_name: becomingahacker-com
+  byoip_ipv6_ip_collection: "projects/gcp-asigbahgcp-nprd-47930/regions/us-east1/publicDelegatedPrefixes/nlb-2602-80a-f004-100-56"
 
 # FIXME cmm - No longer used
 c8k:

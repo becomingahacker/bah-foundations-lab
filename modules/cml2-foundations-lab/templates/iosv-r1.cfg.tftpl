@@ -18,9 +18,9 @@ ip dhcp pool KALI
   network 10.1.1.0 255.255.255.0
   default-router 10.1.1.1
 !
-ipv6 dhcp pool KALI
-  ! dns-server ${v6_name_server}
-  address prefix ${format("%s/112", cidrhost(cidrsubnet(format("%s/%s", global_ipv6_prefix, global_ipv6_prefix_length),16,1),0))}
+!ipv6 dhcp pool KALI
+!  ! dns-server ${v6_name_server}
+!  address prefix ${global_ipv6_prefix}
 !
 key chain RIP
  key 1
@@ -33,9 +33,6 @@ interface Loopback0
   ip nat inside
 interface Loopback1
   ip address ${global_ipv4_address} 255.255.255.255
-  ! first host in prefix
-  ipv6 address ${format("%s", cidrhost(format("%s/%s", global_ipv6_prefix, global_ipv6_prefix_length), 0)) }/128
-  ipv6 enable
   ip nat outside
 interface GigabitEthernet0/0
   description ioll2-xe-sw1 E0/0
@@ -45,10 +42,10 @@ interface GigabitEthernet0/0
   speed auto
   media-type rj45
   ip rip authentication key-chain RIP
-  ipv6 address ${format("%s/112", cidrhost(cidrsubnet(format("%s/%s", global_ipv6_prefix, global_ipv6_prefix_length),16,1),1)) }
-  ipv6 nd managed-config-flag
+  ipv6 address ${cidrhost(global_ipv6_prefix, 1)}/64
+  ! ipv6 nd managed-config-flag
   ipv6 enable
-  ipv6 dhcp server KALI
+  ! ipv6 dhcp server KALI
   ipv6 rip DEFAULT enable
   ipv6 rip DEFAULT default-information originate
 interface GigabitEthernet0/1
@@ -102,8 +99,7 @@ router bgp 65001
   neighbor ${bgp_ipv6_peer} activate
   neighbor ${bgp_ipv6_peer} allowas-in 1
  address-family ipv6 unicast
-  network ${format("%s", cidrhost(format("%s/%s", global_ipv6_prefix, global_ipv6_prefix_length), 0)) }/128
-  aggregate-address ${format("%s/%s", global_ipv6_prefix, global_ipv6_prefix_length)} as-set summary-only
+  network ${global_ipv6_prefix}
   neighbor ${bgp_ipv6_peer} activate
   neighbor ${bgp_ipv6_peer} allowas-in 1
 ip http server
@@ -131,39 +127,6 @@ snmp-server host 10.1.1.4 version 2c ULTRAS3CR3T
 access-list 1 permit 10.1.1.4 log
 access-list 2 permit 10.1.1.4 log
 !
-banner exec @
---------------------------------------------
-| Forms FORM-29827281-12:                  |
-| Test Assessment Report                   |
-|                                          |
-|                                          |
-| This was a triumph.                      |
-| I'm making a note here:                  |
-| HUGE SUCCESS.                            |
-| It's hard to overstate my satisfaction.  |
-|                                          |
---------------------------------------------
-@
-banner login @
-
-                                 NOTICE
-
-  Use of this system is RESTRICTED. Access is limited to individuals
-  authorized by Cisco ASIG and who have have sufficient chops to kick its
-  ass.  Unauthorized users are prohibited...but whatever man...
-
-  Users (authorized or unauthorized) have no explicit or implicit expectation
-  of privacy.  Any or all uses of this system may be subject to one or more
-  of the following actions: interception, monitoring, recording, auditing,
-  inspection and disclosing to security personnel and law enforcement
-  personnel.  By using this system, the user consents to these actions.
-  Unauthorized or improper use of this system may result in administrative
-  disciplinary action and civil and criminal penalties.  By accessing this
-  system you indicate your awareness of and consent to these terms and
-  conditions of use.
-
-  So there.
-@
 !
 !
 line vty 0 4

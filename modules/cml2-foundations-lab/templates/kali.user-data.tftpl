@@ -38,6 +38,9 @@ runcmd:
   - mv /root/becoming-a-hacker/labs /root
   - rmdir /root/becoming-a-hacker
   - mv /root/labs /root/becoming-a-hacker
+  - 2to3-2.7 -w /root/becoming-a-hacker/networking/get-cisco-cfg.py
+  - 2to3-2.7 -w /root/becoming-a-hacker/networking/merge-cisco-cfg.py
+  - 2to3-2.7 -w /root/becoming-a-hacker/networking/inject.py
 
 #bootcmd:
 #  - true

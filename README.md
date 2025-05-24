@@ -59,7 +59,7 @@ We already have PAPs and PDPs set up in `ASIG-BAH-GCP`.  There needs to be a
 forwarding rule for every `/32`.
 
 Becoming a Hacker Foundations has one `/28`
-[delegated to it](https://console.cloud.google.com/networking/byoip/list?invt=Abms5A&project=gcp-asigbahgcp-nprd-47930) in `us-east1`:
+[delegated to it](https://console.cloud.google.com/networking/byoip/list?invt=Abms5A&project=gcp-asigbahgcp-nprd-47930) in `us-east1`, this prefix can be used with VMs or a Load Balancer:
 
 * `172.98.19.240/28`
 
@@ -89,20 +89,8 @@ selfLink: https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-479
 status: ANNOUNCED_TO_INTERNET
 ```
 
-```
-for i in `seq 240 255`
-do 
-  gcloud compute forwarding-rules create --ip-protocol=L3_DEFAULT \
-    --ports=ALL \
-    --backend-service="projects/gcp-asigbahgcp-nprd-47930/regions/us-east1/backendServices/c8k-backend-service" \
-    --ip-version=IPV4 \
-    --load-balancing-scheme=EXTERNAL \
-    --network-tier=PREMIUM \
-    --region=us-east1 \
-    --address=172.98.19.$i \
-    fr-172-98-19-$i
-done
-```
+It's not [currently possible](https://github.com/hashicorp/terraform-provider-google/issues/19147) to create addresses from a PDP in Terraform.  This has to be done manually and should already be done for you.
+
 
 ## Bring your own IPv6
 
@@ -110,7 +98,7 @@ We already have PAPs and PDPs set up in `ASIG-BAH-GCP`.  There needs to be a
 forwarding rule for every `/64`.
 
 Becoming a Hacker Foundations has two `/56`s
-[delegated to it](https://console.cloud.google.com/networking/byoip/list?invt=Abms5A&project=gcp-asigbahgcp-nprd-47930) in `us-east1`:
+[delegated to it](https://console.cloud.google.com/networking/byoip/list?invt=Abms5A&project=gcp-asigbahgcp-nprd-47930) in `us-east1`, one prefix is for [Subnets](https://cloud.google.com/compute/docs/reference/rest/v1/subnetworks/insert) to assign to hosts in GCE, the other is for Load Balancer Forwarding Rules:
 
 * `2602:80a:f004:100::/56`
 * `2602:80a:f004:200::/56`
@@ -133,22 +121,6 @@ parentPrefix: https://www.googleapis.com/compute/v1/projects/gcp-asigaurynbyoipg
 region: https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/regions/us-east1
 selfLink: https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/regions/us-east1/publicDelegatedPrefixes/nlb-2602-80a-f004-100-56
 status: ANNOUNCED_TO_INTERNET
-```
-
-```
-for i in `seq 100 105`
-do 
-  gcloud compute forwarding-rules create --ip-protocol=L3_DEFAULT \
-    --ports=ALL \
-    --backend-service="projects/gcp-asigbahgcp-nprd-47930/regions/us-east1/backendServices/c8k-backend-service" \
-    --ip-version=IPV6 \
-    --load-balancing-scheme=EXTERNAL \
-    --network-tier=PREMIUM \
-    --region=us-east1 \
-    --ip-collection="nlb-2602-80a-f004-100-56" \
-    --address="2602:80a:f004:${i}::/64" \
-    fr-2602-80a-f004-${i}-64
-done
 ```
 
 ## Start Labs
@@ -217,3 +189,31 @@ Wipe the pod, and try again.  Let's say it's pod 1 you want to recreate:
 terraform destroy -target module.pod[0]
 terraform apply
 ```
+
+### Lab compute hosts have been preempted and the cluster is an unhealthy state
+
+The symptoms are the cluster is unhealthy, and some/all lab nodes are in a
+`DISCONNECTED` state signified by an orange chain link icon with a white slash
+through it.
+
+#### Recovery
+
+As far as what it takes to recover, these are the steps:
+
+* In [CML node administration](https://becomingahacker.com/system_admin/nodes), filter by state `DISCONNECTED`, select All, then **Stop** and **Wipe** the nodes.  This will remove them from that compute node.
+* In [CML compute hosts](https://becomingahacker.com/system_admin/compute_hosts), select the `Disconnected` host (with the red X state), change the admission state to `REGISTERED`, then choose `DECOMMISSION`, then chose `REMOVE`.
+* The System Health should return back to green.
+* In the [Google Compute Engine Instance Groups](https://console.cloud.google.com/compute/instanceGroups/list?inv=1&invt=AbyRIA&project=gcp-asigbahgcp-nprd-47930), choose the `cml-instance-group-manager-XXXXXX`, chose the VM that was preempted in the compute hosts above, then delete the node(s).
+* The `Target running size` will shrink by the number of nodes you delete.  Set it back to the desired state by `Edit`ing the instance group manager and set back to the desired target size.
+* New nodes will be created, and they will automatically be registered in CML.  Just be patient.  It takes a couple of minutes.
+* Monitor the [CML Cluster Status](https://becomingahacker.com/diagnostics/cluster_status) page and wait for the system to return to normal and all services are healthy
+* Have the students start their lab pods, if desired.  I'd recommend not provisioning the compute nodes as Spot for a class.  Reserve Spot for off-times.  You can change the provisioning model on the fly by changing the Template from the instance group manager for the compute nodes.
+
+#### Long Term Fix
+
+* The root cause is when a machine is preempted, it's stopped by Google, and the machine's [local storage on SSDs is lost](https://cloud.google.com/compute/docs/disks/local-ssd#data_persistence).  This state can be preserved by Google, but that's a relatively new feature in Preview at the time of writing and we aren't using it.  We use Local Storage for running labs because the performance is 100x better than running on mounted disks (like EBS if you're familiar with AWS).  It seriously makes a huge difference.
+* The [machine](https://cloud.google.com/compute/docs/instances/preemptible#preemption-process) needs to recognize it's being [preempted](https://cloud.google.com/compute/docs/instances/create-use-preemptible#detecting_if_an_instance_was_preempted), and not just with an ordinary shutdown.  The Google Guest Agent can run [scripts](https://github.com/GoogleCloudPlatform/guest-agent?tab=readme-ov-file#metadata-scripts) during a shutdown.  See this [Stack Overflow Post](https://stackoverflow.com/a/57862925/29463184) for details.
+* This script can query the machine preemption state from the metadata server with `curl "http://metadata.google.internal/computeMetadata/v1/instance/preempted" -H "Metadata-Flavor: Google"` and check for a return value of `TRUE`.  If the target state is `TRUE` the server has been preempted and Google will destroy the instance in or around *30 seconds*.
+* Next the script should [**Stop** and **Wipe**](https://developer.cisco.com/docs/modeling-labs/deleting-labs/) all its [resident Nodes with the appropriate compute ID](https://becomingahacker.com/api/v0/ui/#/Nodes) with the CML controller (as shown in the recovery steps above, but using the [APIs](https://becomingahacker.com/api/v0/ui/#/System)), and deregister itself before committing Seppuku.  When CML stops a node, it doesn't stop them gracefully with the current version and it's relatively quick.  This API needs privileged credentials and the compute nodes should probably each have their own, rather than using a common one.
+* The compute host will die, and the instance group manager will restart the node in the same availability zone with the same boot disk.  This means the compute node may stay down if there are no more resources, but this is rare.  The compute node will register itself and be available for use with labs and nodes.  This step will likely need some further fixes.  The instance group manager likely needs some tweaks to do some health checking to force recreations in different zones in the region.
+

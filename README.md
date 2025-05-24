@@ -55,55 +55,104 @@ terraform output -json | jq .cml_credentials.value
 
 ## Bring your own IPv4
 
-We already have PAPs and PDPs set up in `ASIG-BAH-GCP`.  There needs to be a 
-forwarding rule for every `/32`.
+> [!IMPORTANT]
+> These BYOIP (v4 and v6) networks are regional resources, and only available
+> in `us-east1`.  If you move the lab to South Asia, the PDP needs to be moved
+> as well.  Lab Engineering or an AURYN admin can help you do this.
 
-Becoming a Hacker Foundations has one `/28`
-[delegated to it](https://console.cloud.google.com/networking/byoip/list?invt=Abms5A&project=gcp-asigbahgcp-nprd-47930) in `us-east1`, this prefix can be used with VMs or a Load Balancer:
+We already have Publicly Advertised Prefixes (PAPs) and Publicly Delegated
+Prefixes (PDPs) set up for `ASIG-BAH-GCP`.  Becoming a Hacker Foundations has
+one `/27` [delegated to
+it](https://console.cloud.google.com/networking/byoip/list?invt=Abms5A&project=gcp-asigbahgcp-nprd-47930)
+in `us-east1`. This should allow for **29 pods** with Cisco IPs, the current
+ultimate limit of the system without using Google Cloud IPs. This prefix's
+external IPs can be used with GCE VMs or a Load Balancer:
 
-* `172.98.19.240/28`
+* `172.98.19.192/27`
+
+> [!IMPORTANT]
+> A note about using BYOIPv4 and various hacks:
+> 
+> The last usable and broadcast IPs (`172.98.19.222/27` on `virbr1` and
+> `172.98.19.223` Externally NATed by Google to the `ens5` interface) are
+> reserved for the CML controller.  The all-zeros network (`172.98.19.192`) and
+> broadcast (`172.98.19.223`) IPs typically can only be used for VMs (NATed by
+> Google), and not forwarding rules, **unless** using as a forwarding rule for
+> a `/32` loopback on the target device.  This means we have
+> (`172.98.19.192/32`) available for general use in BAH as long as it's routed
+> (e.g. with BGP or static) as a `/32` internally. Otherwise it's lost to that
+> `/27` prefix according to the typical IPv4 routing behavior.
+
+> [!WARNING]
+> These IPs have a good reputation associated with them, whereas some services
+> don't like GCE external IPs.  Let's make sure they stay that way!  This also
+> allows for tracing incidents back to individual pods in the event of an
+> incident.
 
 Example using gloud CLI:
 
 ```
-$ gcloud compute public-delegated-prefixes describe sub-172-98-19-240-28
+$ gcloud compute public-delegated-prefixes describe sub-172-98-19-192-27
 byoipApiVersion: V2
-creationTimestamp: '2025-03-14T14:31:25.815-07:00'
+creationTimestamp: '2025-03-24T17:55:16.101-07:00'
 description: ''
-fingerprint: Bjex8Votv0g=
-id: '7360803315358703298'
-ipCidrRange: 172.98.19.240/28
+fingerprint: 3x5z71hjBeo=
+id: '4814879945057386523'
+ipCidrRange: 172.98.19.192/27
 kind: compute#publicDelegatedPrefix
-name: sub-172-98-19-240-28
-parentPrefix: https://www.googleapis.com/compute/v1/projects/gcp-asigaurynbyoipg-nprd-33190/regions/us-east1/publicDelegatedPrefixes/pdp-172-98-19-240-28
+name: sub-172-98-19-192-27
+parentPrefix: https://www.googleapis.com/compute/v1/projects/gcp-asigaurynbyoipg-nprd-33190/regions/us-east1/publicDelegatedPrefixes/pdp-172-98-19-192-27
+region: https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/regions/us-east1
+selfLink: https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/regions/us-east1/publicDelegatedPrefixes/sub-172-98-19-192-27
+status: ANNOUNCED_TO_INTERNET
+CMM-M-2T7L:~ cmm$ gcloud compute public-delegated-prefixes describe sub-172-98-19-192-27
+byoipApiVersion: V2
+creationTimestamp: '2025-03-24T17:55:16.101-07:00'
+description: ''
+fingerprint: 3x5z71hjBeo=
+id: '4814879945057386523'
+ipCidrRange: 172.98.19.192/27
+kind: compute#publicDelegatedPrefix
+name: sub-172-98-19-192-27
+parentPrefix: https://www.googleapis.com/compute/v1/projects/gcp-asigaurynbyoipg-nprd-33190/regions/us-east1/publicDelegatedPrefixes/pdp-172-98-19-192-27
 publicDelegatedSubPrefixs:
 - delegateeProject: gcp-asigbahgcp-nprd-47930
   description: ''
-  ipCidrRange: 172.98.19.240/28
+  ipCidrRange: 172.98.19.192/27
   isAddress: true
-  name: sub-172-98-19-240-28-addresses
+  name: sub-172-98-19-192-27-addresses
   region: us-east1
   status: ACTIVE
 region: https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/regions/us-east1
-selfLink: https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/regions/us-east1/publicDelegatedPrefixes/sub-172-98-19-240-28
+selfLink: https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/regions/us-east1/publicDelegatedPrefixes/sub-172-98-19-192-27
 status: ANNOUNCED_TO_INTERNET
 ```
 
-It's not [currently possible](https://github.com/hashicorp/terraform-provider-google/issues/19147) to create addresses from a PDP in Terraform.  This has to be done manually and should already be done for you.
-
+> [!IMPORTANT]
+> It's not [currently possible](https://github.com/hashicorp/terraform-provider-google/issues/19147)
+> to create addresses from a PDP in Terraform.  This has to be done manually
+> and should already be done for you.
 
 ## Bring your own IPv6
 
 We already have PAPs and PDPs set up in `ASIG-BAH-GCP`.  There needs to be a 
 forwarding rule for every `/64`.
 
-Becoming a Hacker Foundations has two `/56`s
-[delegated to it](https://console.cloud.google.com/networking/byoip/list?invt=Abms5A&project=gcp-asigbahgcp-nprd-47930) in `us-east1`, one prefix is for [Subnets](https://cloud.google.com/compute/docs/reference/rest/v1/subnetworks/insert) to assign to hosts in GCE, the other is for Load Balancer Forwarding Rules:
+Becoming a Hacker Foundations has two `/56`s 
+[delegated to it](https://console.cloud.google.com/networking/byoip/list?invt=Abms5A&project=gcp-asigbahgcp-nprd-47930)
+in `us-east1`, one prefix is for `/64` Load Balancer Forwarding Rules, the
+other is for
+[Subnets](https://cloud.google.com/compute/docs/reference/rest/v1/subnetworks/insert)
+and to assign to hosts in GCE:
 
-* `2602:80a:f004:100::/56`
+* `2602:80a:f004:100::/56`:
+  * Name: `nlb-2602-80a-f004-100-56`
+  * Mode: `EXTERNAL_IPV6_FORWARDING_RULE_CREATION`
 * `2602:80a:f004:200::/56`
+  * Name: `net-2602-80a-f004-200-56`
+  * Mode: `EXTERNAL_IPV6_SUBNETWORK_CREATION`
 
-Example using gloud CLI:
+Example using `gloud` CLI:
 
 ```
 $ gcloud compute public-delegated-prefixes describe nlb-2602-80a-f004-100-56
@@ -153,7 +202,11 @@ terraform apply
 ```
 
 * If this doesn't fix it, delete the single applicable pod in the error message
-  and reapply:
+  and reapply (note, this is the second pod):
+
+> [!WARNING]
+> This is a destructive operation and the students in the pod will lose any
+> changes they've made.
 
 ```
 terraform destroy -target 'module.pod[1]'
@@ -164,16 +217,22 @@ terraform apply
 
 If this still doesn't fix it, delete all the pods and start over:
 
+> [!WARNING]
+> This is a destructive operation and the whole class will have to restart
+> their labs and will lose any changes they've made.
+
+> [!CAUTION]
+> If you destroy the entire lab deployment, e.g. `terraform destroy &&
+> terraform apply`, all the student passwords will be changed unless you
+> explicitly set them with the `cml_credentials.json` file in the workspace
+> root.
+
 ```
 terraform destroy -target 'module.pod'
 ```
 ```
 terraform apply
 ```
-
-This is, of course, a destructive operation and the whole class will have to restart their labs.
-
-**Note**: If you destroy the entire deployment, all the passwords will change upon apply!
 
 ### Lab is not in DEFINED_ON_CORE state
 
@@ -196,6 +255,14 @@ The symptoms are the cluster is unhealthy, and some/all lab nodes are in a
 `DISCONNECTED` state signified by an orange chain link icon with a white slash
 through it.
 
+> [!WARNING]
+> This is a destructive scenario for those pods affected and will have to
+> restart their labs and will lose any changes they've made.  It is recommended
+> not provisioning the compute nodes as Spot for a class.  Reserve Spot for
+> off-times.  You can change the provisioning model on-the-fly without
+> rebuilding by changing the Template from the instance group manager **and
+> deleting** the existing compute machines to reprovision them.
+
 #### Recovery
 
 As far as what it takes to recover, these are the steps:
@@ -207,8 +274,7 @@ As far as what it takes to recover, these are the steps:
 * The `Target running size` will shrink by the number of nodes you delete.  Set it back to the desired state by `Edit`ing the instance group manager and set back to the desired target size.
 * New nodes will be created, and they will automatically be registered in CML.  Just be patient.  It takes a couple of minutes.
 * Monitor the [CML Cluster Status](https://becomingahacker.com/diagnostics/cluster_status) page and wait for the system to return to normal and all services are healthy
-* Have the students start their lab pods, if desired.  I'd recommend not provisioning the compute nodes as Spot for a class.  Reserve Spot for off-times.  You can change the provisioning model on the fly by changing the Template from the instance group manager for the compute nodes.
-
+* Have the students start their lab pods, if desired.
 #### Long Term Fix
 
 * The root cause is when a machine is preempted, it's stopped by Google, and the machine's [local storage on SSDs is lost](https://cloud.google.com/compute/docs/disks/local-ssd#data_persistence).  This state can be preserved by Google, but that's a relatively new feature in Preview at the time of writing and we aren't using it.  We use Local Storage for running labs because the performance is 100x better than running on mounted disks (like EBS if you're familiar with AWS).  It seriously makes a huge difference.

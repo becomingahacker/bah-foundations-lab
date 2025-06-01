@@ -5,24 +5,24 @@ Becoming a Hacker Foundations Lab running on Cisco Modeling Labs
 ## Create Labs
 
 * Edit `config.yml` and set `pod_count` to the desired count.
-* Run `terraform apply`
+* Run `tofu apply`
 
 ```
-terraform apply
+tofu apply
 ```
 
 Labs will be created, along with pod users, groups and passwords.
 
 * After the labs are created, get the usernames and passwords with 
-  `terraform output`:
+  `tofu output`:
 
 ```
-terraform output -json | jq .cml_credentials.value
+tofu output -json | jq .cml_credentials.value
 ```
 
 Example:
 ```
-terraform output -json | jq .cml_credentials.value
+tofu output -json | jq .cml_credentials.value
 {
   "pod1": "personally-cute-manatee",
   "pod2": "evidently-eternal-treefrog",
@@ -33,7 +33,7 @@ terraform output -json | jq .cml_credentials.value
 > [!NOTE]
 > If you want to override the randomized passwords that are generated, create a file
 > in the workspace root called `cml_credentials.json`.  The file should have the same
-> format as `terraform output -json | jq .cml_credentials.value`, e.g.
+> format as `tofu output -json | jq .cml_credentials.value`, e.g.
 >
 > ```json
 > {
@@ -51,7 +51,7 @@ terraform output -json | jq .cml_credentials.value
 > ```
 > 
 > If the pod is not defined, it will get a randomly-generated password based on
-> [`random_pet`](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/pet).
+> [`random_pet`](https://search.opentofu.org/provider/hashicorp/random/latest/docs/resources/pet).
 
 ## Bring your own IPv4
 
@@ -130,7 +130,7 @@ status: ANNOUNCED_TO_INTERNET
 
 > [!IMPORTANT]
 > It's not [currently possible](https://github.com/hashicorp/terraform-provider-google/issues/19147)
-> to create addresses from a PDP in Terraform.  This has to be done manually
+> to create addresses from a PDP in OpenTofu.  This has to be done manually
 > and should already be done for you.
 
 ## Bring your own IPv6
@@ -195,10 +195,10 @@ It means you're trying to change labs that are currently running.  You have to
 stop and wipe them before making kinds of changes.
 
 * Stop all labs from the Dashboard, Choose `Rows per Page: All`, Select All,
-  then `Stop`, followed by `Wipe`, then `terraform apply` again:
+  then `Stop`, followed by `Wipe`, then `tofu apply` again:
 
 ```
-terraform apply
+tofu apply
 ```
 
 * If this doesn't fix it, delete the single applicable pod in the error message
@@ -209,10 +209,10 @@ terraform apply
 > changes they've made.
 
 ```
-terraform destroy -target 'module.pod[1]'
+tofu destroy -target 'module.pod[1]'
 ```
 ```
-terraform apply
+tofu apply
 ```
 
 If this still doesn't fix it, delete all the pods and start over:
@@ -222,16 +222,16 @@ If this still doesn't fix it, delete all the pods and start over:
 > their labs and will lose any changes they've made.
 
 > [!CAUTION]
-> If you destroy the entire lab deployment, e.g. `terraform destroy &&
-> terraform apply`, all the student passwords will be changed unless you
+> If you destroy the entire lab deployment, e.g. `tofu destroy &&
+> tofu apply`, all the student passwords will be changed unless you
 > explicitly set them with the `cml_credentials.json` file in the workspace
 > root.
 
 ```
-terraform destroy -target 'module.pod'
+tofu destroy -target 'module.pod'
 ```
 ```
-terraform apply
+tofu apply
 ```
 
 ### Lab is not in DEFINED_ON_CORE state
@@ -245,8 +245,8 @@ For this error:
 Wipe the pod, and try again.  Let's say it's pod 1 you want to recreate:
 
 ```
-terraform destroy -target module.pod[0]
-terraform apply
+tofu destroy -target module.pod[0]
+tofu apply
 ```
 
 ### Lab compute hosts have been preempted and the cluster is an unhealthy state

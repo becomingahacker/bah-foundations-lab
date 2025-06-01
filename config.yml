@@ -79,9 +79,9 @@ c8k:
 
 cml:
   # WARNING: These may all need to be updated to match deployment
-  network_name: cml-network-a36ff7c1
-  subnet_name: cml-controller-subnet-a36ff7c1
-  lab_network_endpoint_group_self_link: "https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/zones/us-east1-b/networkEndpointGroups/cml-controller-lab-neg-a36ff7c1"
+  network_name: cml-network-571b60a4
+  subnet_name: cml-controller-subnet-571b60a4
+  lab_network_endpoint_group_self_link: "https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/zones/us-east1-b/networkEndpointGroups/cml-controller-lab-neg-571b60a4"
   bgp_ipv6_peer: "2600:1900:4020:441::1:ffff"
 
 secret:

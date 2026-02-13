@@ -38,7 +38,7 @@ gcp:
   #  nweigand:ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKh/PoDlHZ784blTY39txDUsQaI6nzdE53CjngwYM5MD nweigand@cisco.com
   #  jallbrit:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDJX9lBCF2q+wkZviWilVjN7tPxja7wLYowfS8UncpkGITkPVnXcRPZzX4xeJVvoCCSjNuR+tdE7bQluMogrzZ9kKwW7vtzq95OYPbsZsOXEo9apzha2pMhQnVQWuUrME+v46TNo6jI2VGYgCV9J8puoQCTIimE0kZi2FT8/f2Qu6h/wNm3mWKsCUoZbtWK3NBrrYGpvgJkFCccJSnl7aTdOvem1PKbqg492vh4MI7ejPyBrOLGTF0oxFneLtXk0sPG8nTee0vzJrr930bS0lm77GSv+DPMiZ+De1zFGOqK6uPmLUUhfCfAMEXhghcZNKJmcmw9Jl290tqi8NMmlFp7XJ9TGXLiU1HpimRBMshkmUpdfxOwUZgVuON3yJ7KsxHKf1IfEcT1O3uDkjDOTB73NGoAu0tAJFqF9vZmxFMvp/aL1eje+ysLpqT+pBUueR55IWrmaQkOeO4Hxp/uMkX6EqLL4FP/Tsm87gkJaGGBs2/gv5cMC5E+a6K88afzk00= jallbrit@cisco.com
   dns_zone_name: becomingahacker-com
-  byoip_ipv6_ip_collection: "projects/gcp-asigbahgcp-nprd-47930/regions/us-east1/publicDelegatedPrefixes/asig-bah-prod-us-east1-nlb-2602-80a-f004-56"
+  byoip_ipv6_ip_collection: "projects/gcp-asigbahgcp-nprd-47930/regions/us-east1/publicDelegatedPrefixes/asig-bah-prod-us-east1-nlb-2602-80a-f004-200-56"
 
 # FIXME cmm - No longer used
 c8k:
@@ -79,10 +79,10 @@ c8k:
 
 cml:
   # WARNING: These may all need to be updated to match deployment
-  network_name: cml-network-fdf27859
-  subnet_name: cml-controller-subnet-fdf27859
-  lab_network_endpoint_group_self_link: "https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/zones/us-east1-b/networkEndpointGroups/cml-controller-lab-neg-fdf27859"
-  bgp_ipv6_peer: "2600:1900:4021:3d2::1:ffff"
+  network_name: cml-network-81e175aa
+  subnet_name: cml-controller-subnet-81e175aa
+  lab_network_endpoint_group_self_link: "https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/zones/us-east1-b/networkEndpointGroups/cml-controller-lab-neg-81e175aa"
+  bgp_ipv6_peer: "2600:1900:4021:53c::1:ffff"
 
 secret:
   # At this time, 'vault', 'conjur' and 'dummy' are supported secrets managers.

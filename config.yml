@@ -79,10 +79,10 @@ c8k:
 
 cml:
   # WARNING: These may all need to be updated to match deployment
-  network_name: cml-network-81e175aa
-  subnet_name: cml-controller-subnet-81e175aa
-  lab_network_endpoint_group_self_link: "https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/zones/us-east1-b/networkEndpointGroups/cml-controller-lab-neg-81e175aa"
-  bgp_ipv6_peer: "2600:1900:4021:53c::1:ffff"
+  network_name: cml-network-239a8029
+  subnet_name: cml-controller-subnet-239a8029
+  lab_network_endpoint_group_self_link: "https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/zones/us-east1-b/networkEndpointGroups/cml-controller-lab-neg-239a8029"
+  bgp_ipv6_peer: "2602:80a:f004:301::1:ffff"
 
 secret:
   # At this time, 'vault', 'conjur' and 'dummy' are supported secrets managers.

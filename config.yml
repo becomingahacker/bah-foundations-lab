@@ -8,6 +8,7 @@
 # This is the configuration file for the Foundations lab environment.
 #
 
+# Up to 29 pods can be created, limited by IPv4 address space
 pod_count: 12
 pod_domain_name: pod.becomingahacker.com
 
@@ -38,51 +39,12 @@ gcp:
   #  nweigand:ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKh/PoDlHZ784blTY39txDUsQaI6nzdE53CjngwYM5MD nweigand@cisco.com
   #  jallbrit:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDJX9lBCF2q+wkZviWilVjN7tPxja7wLYowfS8UncpkGITkPVnXcRPZzX4xeJVvoCCSjNuR+tdE7bQluMogrzZ9kKwW7vtzq95OYPbsZsOXEo9apzha2pMhQnVQWuUrME+v46TNo6jI2VGYgCV9J8puoQCTIimE0kZi2FT8/f2Qu6h/wNm3mWKsCUoZbtWK3NBrrYGpvgJkFCccJSnl7aTdOvem1PKbqg492vh4MI7ejPyBrOLGTF0oxFneLtXk0sPG8nTee0vzJrr930bS0lm77GSv+DPMiZ+De1zFGOqK6uPmLUUhfCfAMEXhghcZNKJmcmw9Jl290tqi8NMmlFp7XJ9TGXLiU1HpimRBMshkmUpdfxOwUZgVuON3yJ7KsxHKf1IfEcT1O3uDkjDOTB73NGoAu0tAJFqF9vZmxFMvp/aL1eje+ysLpqT+pBUueR55IWrmaQkOeO4Hxp/uMkX6EqLL4FP/Tsm87gkJaGGBs2/gv5cMC5E+a6K88afzk00= jallbrit@cisco.com
   dns_zone_name: becomingahacker-com
-  byoip_ipv6_ip_collection: "projects/gcp-asigbahgcp-nprd-47930/regions/us-east1/publicDelegatedPrefixes/asig-bah-prod-us-east1-nlb-2602-80a-f004-200-56"
-
-# FIXME cmm - No longer used
-c8k:
-  instance_count: 2
-  # gcloud compute images list --project cisco-public
-  # gcloud compute images create cisco-c8k-17-16-01a --source-image projects/cisco-public/global/images/cisco-c8k-17-16-01a
-  image: cisco-c8k-17-16-01a
-  machine_type: n1-standard-2
-  disk_size_gb: 16
-  hostname_prefix: bah-c8k
-  network_name: cml-c8k-network
-  subnet_name: bahf-c8k-subnet
-  subnet_cidr: 10.64.2.0/24
-  # The loopback IP address prefix for the Catalyst 8000v instances.  Uses the last IPs first to make room
-  # for pod loopback addresses
-  loopback_ipv4_prefix: 10.64.0.0/24
-  service_account_id: bah-foundations
-  service_account_display_name: "Becoming a Hacker Foundations Pod Service Account"
-  allowed_ipv4_subnets:
-    ## GCE cml-subnet
-    #- "10.10.0.0/16"
-    ## GCE Health Chekers
-    #- "35.191.0.0/16"
-    #- "209.85.152.0/22"
-    #- "209.85.204.0/22"
-    ## Google Front End
-    #- "34.96.0.0/16"
-    #- "34.127.0.0/16"
-    # RTP NAT pool
-    - "173.38.117.64/26"
-    # cmm
-    - "23.116.118.232/29"
-    # cmm
-    - "99.69.22.234/32"
-    # ASIG
-    - "64.100.197.0/24"
-    - "64.100.220.0/23"
 
 cml:
-  # WARNING: These may all need to be updated to match deployment
-  network_name: cml-network-239a8029
-  subnet_name: cml-controller-subnet-239a8029
-  lab_network_endpoint_group_self_link: "https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/zones/us-east1-b/networkEndpointGroups/cml-controller-lab-neg-239a8029"
-  bgp_ipv6_peer: "2602:80a:f004:301::1:ffff"
+  bgp_ipv6_peer: "2602:80a:f004:200::ffff"
+  bgp_ipv4_peer: "172.98.19.222"
+  global_ipv6_prefix: "2602:80a:f004:200::/56"
+  global_ipv4_prefix: "172.98.19.192/27"
 
 secret:
   # At this time, 'vault', 'conjur' and 'dummy' are supported secrets managers.

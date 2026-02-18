@@ -25,11 +25,6 @@ module "secrets" {
   cfg    = local.raw_cfg
 }
 
-module "catalyst8000v" {
-  source = "./modules/catalyst8000v"
-  cfg    = local.cfg
-}
-
 module "user" {
   source      = "./modules/cml2-users"
   count       = local.cfg.pod_count
@@ -47,10 +42,13 @@ module "pod" {
   title                     = format("Becoming a Hacker Foundations - Pod %02d", count.index + 1)
   pod_number                = count.index + 1
   ip_prefix                 = cidrsubnet("10.0.0.0/8", 8, count.index + 1)
-  global_ipv4_address       = module.catalyst8000v.pod_ipv4_address[count.index]
-  global_ipv6_prefix        = module.catalyst8000v.pod_ipv6_prefix[count.index]
-  global_ipv6_prefix_length = module.catalyst8000v.pod_ipv6_prefix_length
+  global_ipv4_address       = cidrhost(local.cfg.cml.global_ipv4_prefix, count.index + 1)
+  global_ipv4_netmask       = cidrnetmask(local.cfg.cml.global_ipv4_prefix)
+  global_ipv6_prefix        = cidrsubnet(local.cfg.cml.global_ipv6_prefix, 8, count.index + 1)
+  global_ipv6_address       = cidrhost(cidrsubnet(local.cfg.cml.global_ipv6_prefix, 8, 0), count.index + 1)
+  global_ipv6_prefix_length = 64
   bgp_ipv6_peer             = local.cfg.cml.bgp_ipv6_peer
+  bgp_ipv4_peer             = local.cfg.cml.bgp_ipv4_peer
   internet_mtu              = 1500
   # HACK - use the same domain name for all pods
   #pod_domain_name               = format("bahf-pod%d.%s", count.index + 1, local.cfg.domain_name)

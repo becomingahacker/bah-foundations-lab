@@ -46,8 +46,11 @@ locals {
     internet_mtu              = var.internet_mtu,
     pod_number                = var.pod_number,
     global_ipv4_address       = var.global_ipv4_address,
+    global_ipv4_netmask       = var.global_ipv4_netmask,
+    global_ipv6_address       = var.global_ipv6_address,
+    global_ipv6_prefix_len    = var.global_ipv6_prefix_length,
     global_ipv6_prefix        = var.global_ipv6_prefix,
-    global_ipv6_prefix_length = var.global_ipv6_prefix_length,
+    bgp_ipv4_peer             = var.bgp_ipv4_peer,
     bgp_ipv6_peer             = var.bgp_ipv6_peer,
   })
 }

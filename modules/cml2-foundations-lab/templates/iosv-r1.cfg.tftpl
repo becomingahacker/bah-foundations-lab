@@ -29,11 +29,8 @@ key chain RIP
 ip dhcp excluded-address 10.1.1.1 10.1.1.10
 !
 interface Loopback0
-  ip address 10.64.0.${pod_number} 255.255.255.255
+  ip address 10.0.0.${pod_number} 255.255.255.255
   ip nat inside
-interface Loopback1
-  ip address ${global_ipv4_address} 255.255.255.255
-  ip nat outside
 interface GigabitEthernet0/0
   description ioll2-xe-sw1 E0/0
   ip address 10.1.1.1 255.255.255.0
@@ -51,12 +48,11 @@ interface GigabitEthernet0/0
 interface GigabitEthernet0/1
   description Internet
   mtu ${internet_mtu}
-  ip address 10.64.5.${pod_number} 255.255.255.0
+  ip address ${global_ipv4_address} ${global_ipv4_netmask}
   ip nat outside
   ip virtual-reassembly in
   ipv6 enable
-  ipv6 address dhcp
-  ipv6 nd autoconfig prefix
+  ipv6 address ${global_ipv6_address}/${global_ipv6_prefix_len}
   ipv6 nd ra suppress all
   duplex auto
   speed auto
@@ -74,28 +70,26 @@ interface GigabitEthernet0/3
   speed auto
   media-type rj45
 ip access-list extended NAT
-   ! permit ip ${cidrhost(ip_prefix, 0)} ${wildcard_mask[16]} any
    permit ip 10.1.1.0 0.0.0.255 any
-ip nat inside source list NAT interface Loopback1 overload
+ip nat inside source list NAT interface GigabitEthernet0/1 overload
 router rip
  version 2
  network 10.0.0.0
- network 10.64.0.0
  passive-interface GigabitEthernet0/1
  no auto-summary
 ipv6 router rip DEFAULT
 router bgp 65001
- bgp router-id 10.64.0.${pod_number}
+ bgp router-id 10.0.0.${pod_number}
  bgp log-neighbor-changes
- neighbor 10.64.5.254 remote-as 65000
- ! FIXME cmm - templatize me
+ neighbor ${bgp_ipv4_peer} remote-as 65000
  neighbor ${bgp_ipv6_peer} remote-as 65000
  neighbor ${bgp_ipv6_peer} disable-connected-check
  neighbor ${bgp_ipv6_peer} ttl-security hops 2
  address-family ipv4 unicast
-  network ${global_ipv4_address} mask 255.255.255.255
-  neighbor 10.64.5.254 activate
-  neighbor 10.64.5.254 allowas-in 1
+  network 10.0.0.${pod_number} mask 255.255.255.255
+  network ${global_ipv4_address} mask ${global_ipv4_netmask}
+  neighbor ${bgp_ipv4_peer} activate
+  neighbor ${bgp_ipv4_peer} allowas-in 1
   neighbor ${bgp_ipv6_peer} activate
   neighbor ${bgp_ipv6_peer} allowas-in 1
  address-family ipv6 unicast

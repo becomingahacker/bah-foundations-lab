@@ -24,14 +24,24 @@ variable "global_ipv4_address" {
   description = "Global IP address for the pod"
 }
 
-variable "global_ipv6_prefix" {
+variable "global_ipv4_netmask" {
   type        = string
-  description = "Global IPv6 prefix for the pod"
+  description = "Global IP netmask for the pod"
+}
+
+variable "global_ipv6_address" {
+  type        = string
+  description = "Global IPv6 address for the pod"
 }
 
 variable "global_ipv6_prefix_length" {
   type        = number
   description = "Global IPv6 prefix length for the pod"
+}
+
+variable "global_ipv6_prefix" {
+  type        = string
+  description = "Global IPv6 prefix for the pod"
 }
 
 variable "internet_mtu" {
@@ -42,6 +52,11 @@ variable "internet_mtu" {
 variable "domain_name" {
   type        = string
   description = "Domain name for the pod"
+}
+
+variable "bgp_ipv4_peer" {
+  type        = string
+  description = "BGP IPv4 peer address"
 }
 
 variable "bgp_ipv6_peer" {

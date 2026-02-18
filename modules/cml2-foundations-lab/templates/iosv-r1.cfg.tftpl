@@ -31,7 +31,7 @@ ip dhcp excluded-address 10.1.1.1 10.1.1.10
 interface Loopback0
   ip address 10.0.0.${pod_number} 255.255.255.255
   ip nat inside
-interface GigabitEthernet0/0
+interface Ethernet0/0
   description ioll2-xe-sw1 E0/0
   ip address 10.1.1.1 255.255.255.0
   ip nat inside
@@ -45,7 +45,7 @@ interface GigabitEthernet0/0
   ! ipv6 dhcp server KALI
   ipv6 rip DEFAULT enable
   ipv6 rip DEFAULT default-information originate
-interface GigabitEthernet0/1
+interface Ethernet0/1
   description Internet
   mtu ${internet_mtu}
   ip address ${global_ipv4_address} ${global_ipv4_netmask}
@@ -56,26 +56,23 @@ interface GigabitEthernet0/1
   ipv6 nd ra suppress all
   duplex auto
   speed auto
-  media-type rj45
-interface GigabitEthernet0/2
+interface Ethernet0/2
   no ip address
   shutdown
   duplex auto
   speed auto
-  media-type rj45
-interface GigabitEthernet0/3
+interface Ethernet0/3
   no ip address
   shutdown
   duplex auto
   speed auto
-  media-type rj45
 ip access-list extended NAT
    permit ip 10.1.1.0 0.0.0.255 any
-ip nat inside source list NAT interface GigabitEthernet0/1 overload
+ip nat inside source list NAT interface Ethernet0/1 overload
 router rip
  version 2
  network 10.0.0.0
- passive-interface GigabitEthernet0/1
+ passive-interface Ethernet0/1
  no auto-summary
 ipv6 router rip DEFAULT
 router bgp 65001

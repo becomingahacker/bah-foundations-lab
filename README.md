@@ -57,7 +57,7 @@ tofu output -json | jq .cml_credentials.value
 
 > [!IMPORTANT]
 > These BYOIP (v4 and v6) networks are regional resources, and only available
-> in `us-east1`.  If you move the lab to South Asia, the PDP needs to be moved
+> in `us-east1`.  If you move the lab to South Asia, the PDP **needs to be moved**
 > as well.  Lab Engineering or an AURYN admin can help you do this.
 
 We already have Publicly Advertised Prefixes (PAPs) and Publicly Delegated
@@ -91,39 +91,15 @@ external IPs can be used with GCE VMs or a Load Balancer:
 Example using gloud CLI:
 
 ```
-$ gcloud compute public-delegated-prefixes describe sub-172-98-19-192-27
+$ gcloud compute public-delegated-prefixes describe asig-bah-prod-us-east1-sub-172-98-19-192-27
 byoipApiVersion: V2
-creationTimestamp: '2025-03-24T17:55:16.101-07:00'
-description: ''
-fingerprint: 3x5z71hjBeo=
-id: '4814879945057386523'
+creationTimestamp: '2025-09-07T15:08:07.396-07:00'
+description: ASIG Becoming A Hacker us-east1 IPv4 Sub-delegation
+fingerprint: YQmQcWmLeDo=
+id: '1653030626344025256'
 ipCidrRange: 172.98.19.192/27
 kind: compute#publicDelegatedPrefix
-name: sub-172-98-19-192-27
-parentPrefix: https://www.googleapis.com/compute/v1/projects/gcp-asigaurynbyoipg-nprd-33190/regions/us-east1/publicDelegatedPrefixes/pdp-172-98-19-192-27
-region: https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/regions/us-east1
-selfLink: https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/regions/us-east1/publicDelegatedPrefixes/sub-172-98-19-192-27
-status: ANNOUNCED_TO_INTERNET
-CMM-M-2T7L:~ cmm$ gcloud compute public-delegated-prefixes describe sub-172-98-19-192-27
-byoipApiVersion: V2
-creationTimestamp: '2025-03-24T17:55:16.101-07:00'
-description: ''
-fingerprint: 3x5z71hjBeo=
-id: '4814879945057386523'
-ipCidrRange: 172.98.19.192/27
-kind: compute#publicDelegatedPrefix
-name: sub-172-98-19-192-27
-parentPrefix: https://www.googleapis.com/compute/v1/projects/gcp-asigaurynbyoipg-nprd-33190/regions/us-east1/publicDelegatedPrefixes/pdp-172-98-19-192-27
-publicDelegatedSubPrefixs:
-- delegateeProject: gcp-asigbahgcp-nprd-47930
-  description: ''
-  ipCidrRange: 172.98.19.192/27
-  isAddress: true
-  name: sub-172-98-19-192-27-addresses
-  region: us-east1
-  status: ACTIVE
-region: https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/regions/us-east1
-selfLink: https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/regions/us-east1/publicDelegatedPrefixes/sub-172-98-19-192-27
+...
 status: ANNOUNCED_TO_INTERNET
 ```
 
@@ -144,30 +120,22 @@ other is for
 [Subnets](https://cloud.google.com/compute/docs/reference/rest/v1/subnetworks/insert)
 and to assign to hosts in GCE:
 
-* `2602:80a:f004:100::/56`:
-  * Name: `nlb-2602-80a-f004-100-56`
+* `2602:80a:f004:200::/56`:
+  * Name: `asig-bah-prod-us-east1-nlb-2602-80a-f004-200-56`
   * Mode: `EXTERNAL_IPV6_FORWARDING_RULE_CREATION`
-* `2602:80a:f004:200::/56`
-  * Name: `net-2602-80a-f004-200-56`
+* `2602:80a:f004:300::/56`
+  * Name: `asig-bah-prod-us-east1-net-2602-80a-f004-300-56`
   * Mode: `EXTERNAL_IPV6_SUBNETWORK_CREATION`
 
 Example using `gloud` CLI:
 
 ```
-$ gcloud compute public-delegated-prefixes describe nlb-2602-80a-f004-100-56
+$ gcloud compute public-delegated-prefixes describe asig-bah-prod-us-east1-nlb-2602-80a-f004-200-56
 allocatablePrefixLength: 64
 byoipApiVersion: V2
-creationTimestamp: '2025-03-16T16:47:52.097-07:00'
-description: ''
-fingerprint: EGVdzQREMEQ=
-id: '4107084448669556167'
-ipCidrRange: 2602:80a:f004:100::/56
-kind: compute#publicDelegatedPrefix
-mode: EXTERNAL_IPV6_FORWARDING_RULE_CREATION
-name: nlb-2602-80a-f004-100-56
-parentPrefix: https://www.googleapis.com/compute/v1/projects/gcp-asigaurynbyoipg-nprd-33190/regions/us-east1/publicDelegatedPrefixes/sub-2602-80a-f004-100-56
-region: https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/regions/us-east1
-selfLink: https://www.googleapis.com/compute/v1/projects/gcp-asigbahgcp-nprd-47930/regions/us-east1/publicDelegatedPrefixes/nlb-2602-80a-f004-100-56
+creationTimestamp: '2025-09-07T15:08:21.221-07:00'
+description: ASIG Becoming A Hacker us-east1 IPv6 Forwarding Rules
+...
 status: ANNOUNCED_TO_INTERNET
 ```
 

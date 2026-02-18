@@ -185,8 +185,8 @@ resource "cml2_lifecycle" "top" {
   }
 
   # Start in order, according to stages
-  #state = "STARTED"
-  state = "DEFINED_ON_CORE"
+  state = "STARTED"
+  #state = "DEFINED_ON_CORE"
 
   lifecycle {
     ignore_changes = [

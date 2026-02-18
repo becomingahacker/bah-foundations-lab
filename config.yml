@@ -8,7 +8,7 @@
 # This is the configuration file for the Foundations lab environment.
 #
 
-# Up to 29 pods can be created, limited by IPv4 address space
+# Up to 29 pods can be created, limited by IPv4 address space and compute resources
 pod_count: 12
 pod_domain_name: pod.becomingahacker.com
 

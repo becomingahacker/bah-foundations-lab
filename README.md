@@ -73,15 +73,14 @@ external IPs can be used with GCE VMs or a Load Balancer:
 > [!IMPORTANT]
 > A note about using BYOIPv4 and various hacks:
 > 
-> The last usable and broadcast IPs (`172.98.19.222/27` on `virbr1` and
-> `172.98.19.223` Externally NATed by Google to the `ens5` interface) are
-> reserved for the CML controller.  The all-zeros network (`172.98.19.192`) and
-> broadcast (`172.98.19.223`) IPs typically can only be used for VMs (NATed by
-> Google), and not forwarding rules, **unless** using as a forwarding rule for
-> a `/32` loopback on the target device.  This means we have
-> (`172.98.19.192/32`) available for general use in BAH as long as it's routed
-> (e.g. with BGP or static) as a `/32` internally. Otherwise it's lost to that
-> `/27` prefix according to the typical IPv4 routing behavior.
+> The all-zeros "network" IP and last usable IP (`172.98.19.192` externally NATed by
+> Google to the `ens5` interface and `172.98.19.222/27` on `virbr1`) are reserved
+> for the CML controller.  The all-ones directed broadcast IP (`172.98.19.223`) IP
+> can only be used for VMs (NATed by Google), and not forwarding rules, **unless**
+> using as a forwarding rule for a `/32` loopback on the target device.  This
+> means we have (`172.98.19.223/32`) available for general use in BAH as long as
+> it's routed (e.g. with BGP or static) as a `/32` internally. Otherwise it's lost
+> to that `/27` prefix according to the typical IPv4 routing behavior.
 
 > [!WARNING]
 > These IPs have a good reputation associated with them, whereas some services

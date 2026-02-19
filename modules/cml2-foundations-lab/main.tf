@@ -96,7 +96,7 @@ resource "cml2_node" "ioll2-xe-sw1" {
 resource "cml2_node" "iosv-r1" {
   lab_id         = cml2_lab.foundations_lab.id
   label          = "iosv-r1"
-  nodedefinition = "iol-xe"
+  nodedefinition = "iosv"
   ram            = 768
   x              = 480
   y              = 120

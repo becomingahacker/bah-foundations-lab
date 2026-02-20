@@ -39,6 +39,10 @@ runcmd:
   - 2to3-2.7 -w /root/becoming-a-hacker/networking/get-cisco-cfg.py
   - 2to3-2.7 -w /root/becoming-a-hacker/networking/merge-cisco-cfg.py
   - 2to3-2.7 -w /root/becoming-a-hacker/networking/inject.py
+  # Restart lightdm to apply autologin configuration
+  - systemctl restart lightdm.service 
+  # Eject the CD-ROM used for provisioning
+  - eject /dev/cdrom
 
 #bootcmd:
 #  - true

@@ -57,6 +57,13 @@ write_files:
 
       iface eth0 inet6 auto
 
+  # Auto-login cisco user for VNC/desktop (e.g. CML console)
+  - path: /etc/lightdm/lightdm.conf.d/50-autologin-cisco.conf
+    content: |
+      [Seat:*]
+      autologin-user=cisco
+      autologin-user-timeout=0
+
   # Change the screen resolution to 1440x900 for more room
   - path: /home/cisco/.config/xfce4/xfconf/xfce-perchannel-xml/displays.xml
     content: |

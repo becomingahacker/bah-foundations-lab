@@ -9,7 +9,7 @@
 #
 
 # Up to 29 pods can be created, limited by IPv4 address space and compute resources
-pod_count: 12
+pod_count: 25
 pod_domain_name: pod.becomingahacker.com
 
 # Becoming a Hacker Load Balancer FQDN

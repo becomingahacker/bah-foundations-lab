@@ -6,7 +6,7 @@ users:
   # kali
   #- default
   - name: cisco
-    gecos: Cisco
+    gecos: cisco
     shell: /bin/bash
     plain_text_passwd: cisco
     groups: [adm, audio, cdrom, dialout, floppy, plugdev, sudo, video, dip, netdev, bluetooth, lpadmin, docker, kali-trusted]
@@ -43,6 +43,9 @@ runcmd:
   - systemctl restart lightdm.service 
   # Eject the CD-ROM used for provisioning
   - eject /dev/cdrom
+  - mkdir -vp /srv/tftp
+  - chown -R nobody:nogroup /srv/tftp
+  - systemctl enable --now tftpd-hpa.service
 
 #bootcmd:
 #  - true
@@ -67,6 +70,33 @@ write_files:
       [Seat:*]
       autologin-user=cisco
       autologin-user-timeout=0
+
+  # Disable screensaver and lock screen in VNC session (no autolock)
+  - path: /home/cisco/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-screensaver.xml
+    content: |
+      <?xml version="1.0" encoding="UTF-8"?>
+      <channel name="xfce4-screensaver" version="1.0">
+        <property name="saver-enabled" type="bool" value="false"/>
+        <property name="lock-enabled" type="bool" value="false"/>
+      </channel>
+
+  # Disable lock on suspend/hibernate so VNC session is not locked
+  - path: /home/cisco/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-power-manager.xml
+    content: |
+      <?xml version="1.0" encoding="UTF-8"?>
+      <channel name="xfce4-power-manager" version="1.0">
+        <property name="xfce4-power-manager" type="empty">
+          <property name="lock-screen-suspend-hibernate" type="bool" value="false"/>
+        </property>
+      </channel>
+
+  # Prevent light-locker from starting (used with LightDM; would otherwise autolock)
+  - path: /home/cisco/.config/autostart/light-locker.desktop
+    content: |
+      [Desktop Entry]
+      Type=Application
+      Name=Screen Locker
+      Hidden=true
 
   # Change the screen resolution to 1440x900 for more room
   - path: /home/cisco/.config/xfce4/xfconf/xfce-perchannel-xml/displays.xml

@@ -65,6 +65,7 @@ resource "cml2_node" "kali" {
   lab_id         = cml2_lab.foundations_lab.id
   label          = "kali"
   nodedefinition = "kali-linux"
+  imagedefinition = "kali-linux-new"
   ram            = 8192
   boot_disk_size = 64
   x              = 80
@@ -185,8 +186,8 @@ resource "cml2_lifecycle" "top" {
   }
 
   # Start in order, according to stages
-  state = "STARTED"
-  #state = "DEFINED_ON_CORE"
+  #state = "STARTED"
+  state = "DEFINED_ON_CORE"
 
   lifecycle {
     ignore_changes = [

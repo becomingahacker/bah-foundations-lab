@@ -44,7 +44,7 @@ runcmd:
 #  - true
 
 write_files:
-  # Enable IPv4 static and DHCPv6 on eth0
+  # Enable IPv4 static and SLAAC on eth0
   - path: /etc/network/interfaces.d/eth0
     content: |
       auto eth0

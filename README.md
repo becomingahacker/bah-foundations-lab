@@ -52,6 +52,10 @@ tofu output -json | jq .cml_credentials.value
 > 
 > If the pod is not defined, it will get a randomly-generated password based on
 > [`random_pet`](https://search.opentofu.org/provider/hashicorp/random/latest/docs/resources/pet).
+> 
+
+> You can convert this file to a CSV with `jq` to import into Google Sheets to do a mail merge.
+> `jq -r '(["username", "password"], (to_entries[] | [.key, .value])) | @csv' cml_credentials.json > cml_credentials.csv`
 
 ## Bring your own IPv4
 

@@ -7,8 +7,8 @@
 terraform {
   required_providers {
     cml2 = {
-      source  = "CiscoDevNet/cml2"
-      version = "~>0.8.0"
+      source  = "registry.terraform.io/CiscoDevNet/cml2"
+      version = "0.9.0-beta3"
     }
     google = {
       source  = "hashicorp/google"
@@ -42,4 +42,10 @@ provider "cml2" {
   skip_verify    = false
   dynamic_config = true
   named_configs  = true
+
+  # optional: inject static headers into every request, e.g. when CML is behind
+  # an auth proxy.
+  request_headers = {
+    Proxy-Authorization = "Bearer ${var.proxy_token}"
+  }
 }

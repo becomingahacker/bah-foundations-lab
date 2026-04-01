@@ -2,8 +2,7 @@
 # Manual edits may be lost in future updates.
 
 provider "registry.opentofu.org/ciscodevnet/cml2" {
-  version     = "0.8.5"
-  constraints = "~> 0.8.0"
+  version = "0.8.5"
   hashes = [
     "h1:i+CdG6WTs8m2iLXJgM/u12ibYGEiTPRjgafzffs3scQ=",
     "zh:35d158d491e7ed7aa0bbc57bd5586e7e9219d48acb8cd1f68eb09eb014264796",
@@ -25,16 +24,16 @@ provider "registry.opentofu.org/ciscodevnet/cml2" {
 }
 
 provider "registry.opentofu.org/cyberark/conjur" {
-  version     = "0.8.2"
+  version     = "0.8.4"
   constraints = ">= 0.6.9"
   hashes = [
-    "h1:lMpy5sQyaJAFZJXIULnKa9UTbezyvYn+XGr/01b/hCs=",
-    "zh:043965c176a5823ce4d7b5ff1fb8bd34e90d0d01d84839b33aedee277abf5fc8",
-    "zh:19c5c76b61ee8f1117b0f56db3a68291551302eaaed018a1629381cd771743f2",
-    "zh:6bc57672fbfc3c628ceb4bc9807bef1b45c0441294710834004ea86c52cf893b",
-    "zh:75688064a577b7e050103fba5e216b71f6c97741c51599f384e528ce2ffba700",
-    "zh:89442c5ff8d823be9ab2404fc1ea1ff6e993a37e8baf5940fe44ea504dff5d2a",
-    "zh:b1b5abc896f5ab134c70c809879f08c6e80f03ab3ccce03982454ac0f722b700",
+    "h1:65S55TYmcbC2zlagp3Oa6k800gN5QVfr2gogsLMVWgY=",
+    "zh:59292a880e0a23d907c87ca1e08cd21f5f99c72fc9963dc8374e2c0510de4e15",
+    "zh:6a45f02e84a6127e16a342c5288ef0360f2f2ca6a400bdb9617aa17ca2bd60ea",
+    "zh:b7a346bcb315f69d40ce5bbc3521ca1373413adf30b40aedfe1ae5e69deddf59",
+    "zh:ce7f9d060faca431e0c0a06b13abd0a3baa47c50a71f4b084a10d6d0348d4304",
+    "zh:e9e064959ae3742ab3dded31509b23bb0c58ee7abc2c7946a32c49888e9198b4",
+    "zh:ecd318f07e7b10efb6bf9a805ccb09a456bc5025cb3f5cc31a4e9f4bc38ad7e3",
   ]
 }
 
@@ -57,19 +56,25 @@ provider "registry.opentofu.org/hashicorp/cloudinit" {
 }
 
 provider "registry.opentofu.org/hashicorp/google" {
-  version     = "7.19.0"
+  version     = "7.26.0"
   constraints = ">= 6.17.0"
   hashes = [
-    "h1:XtPQz/D54CqWhSjzRLlTPuKEymfHbNSYBJ73JoLSaJo=",
-    "zh:0cd913fe1c8bdb6cf6295accd4c162a04a3b97c8cc38a53af4d37464211fe6fb",
-    "zh:3f28bd6d6fce934df5e2b42b5981a2b3518b3387efa1bac57df76eb60325378e",
-    "zh:466e2b1e3c3ce4f9c715f464e9a404e170e7311a7a5504427d180064fe59987e",
-    "zh:7311bba05e5c5d74b11d240505e8f2f363ea1b08919a9741b728d23e309468d6",
-    "zh:76855c4778a4814e0e9e26e964daf54b31b18053dd3674f6a3372ec90e7f732a",
-    "zh:86d732e1f1b4c41997eca33724f7ed9d2e45f99b7ddc50b679f420ae168b8ce4",
-    "zh:ad8f61a5245ce82e184ccaeacaa692af36a2515d4e70d1d6bcb8de71c7c5a06f",
-    "zh:bad6fb892243b44441e4b3032f02483a1d39bf139f4f24f6f6a28a7559c340e6",
-    "zh:f675bded624ae170c646fd36670566b1870f89ba99684c9ec4b47a48bfd899e8",
+    "h1:XbFgQ9UUGGGni1RdmDfY+6ffkBnkdB0c4OhoARllqcc=",
+    "zh:0a0328692bb8b96dd44391fa8ac060563f3d442782ea8c10c92dd20e4466a310",
+    "zh:1620529e1abefcc7f543671d3d14e34cf69424b3531f9605f1ce6abe8805e61c",
+    "zh:17aa47faaabc46a06fe0854243d3208b3d637e7d33a2ff963d39747f845c43e3",
+    "zh:2e73b96ccf6fcca4aec30f333553574fc9d80c09763e4377d1f55ec5d8854118",
+    "zh:3b8578671a39529e41acd1507b1ddb6ee9ffb228f90e43c68165c9505aac4b15",
+    "zh:43a0d1f321d5f4149e6762f34e31ad0f301eff6a09652abe1395dbcd96833793",
+    "zh:4adcd4ca2c30b43085ef3b29d5fa08565a00dc398e8259159c20ac5297c80e69",
+    "zh:67fb1f3311e13de9858d52ad995a6f45127226d61fbfe732289f1d4c7bc59201",
+    "zh:6caa3cdcbfc8fd495db0e13aa36420310e1edf8c4e2801f6904cb5e26727ef3e",
+    "zh:7310f44ac2bbf21024221d2a468573be1ff28ee454fa63fa6e4d7387654d590b",
+    "zh:755d0b9f7d3377e88092313bb35bb64e38f8f120d2fcbdb03caa81452d342771",
+    "zh:a256b2429a3654213767ae1ad19374e2e406af712df17b74e53f2ea95ace610a",
+    "zh:a70b493e448d9cc645378d500490a9060980526e3389f36296371f36bd11b5af",
+    "zh:deae54e3387e327b0d40fa75a745d8c04f148bbe31e46c8d3d77b9207612eb57",
+    "zh:fadefc4ae7ac283db6c6a570c4a5dd30b077a9d7f7fb8e7ff9a374a8c210f017",
   ]
 }
 
@@ -88,5 +93,27 @@ provider "registry.opentofu.org/hashicorp/random" {
     "zh:ba396849f0f6d488784f6039095634e1c84e67e31375f3d17218fcf8ce952cb8",
     "zh:cb695db8798957bd64ce411f061307e39cb2baa69668b4d42ccf010db47d2e39",
     "zh:d02704bf99a93dc0b1ca00bd6051df9c431fbe17cd662a1ab58db1b96264a26f",
+  ]
+}
+
+provider "registry.terraform.io/ciscodevnet/cml2" {
+  version     = "0.9.0-beta3"
+  constraints = "0.9.0-beta3"
+  hashes = [
+    "h1:BkZ/i7PRYqO3kuBhE9KUXgAc2nWQJNSFSSdXiEkEYF8=",
+    "zh:5c9bfd67d2191a7240478d508d99b957af996eb2eef2c8259584e21d3e31eb55",
+    "zh:64cfedb504a44bc92db8f7bcfde7940527897369fe157c4469b2baa7a816fdf4",
+    "zh:7622bb8641d2dfa7c1c7fb5f0f981b9e299b9a203f534a4f444036d1b2da57d6",
+    "zh:8398e54f39e0da4d5a94d1bb6b14e05fb3eb2563626b2049058f4df7cc5b6723",
+    "zh:890df766e9b839623b1f0437355032a3c006226a6c200cd911e15ee1a9014e9f",
+    "zh:8b5ebc14e38decf84e572e18fc6c2baa738e464b9c5c688c643cea075d96c08e",
+    "zh:96e0a4839fe361d98185af92b6c82b92a7ff2475bf34cd710511b6cd0cf6c559",
+    "zh:9d28d3479112b858a548b468b08f2918349d6148bbbf8386de7707550a0eb952",
+    "zh:a192845e12317fc680bc0a8149fd35fa6523ce7b843c9d007025fd3752093b94",
+    "zh:a866e9694cca77427f86c071fa9369859e1e5859840f9caa2b8b304ce4c66b89",
+    "zh:b4c577e503a33131aab32bee55430a9094be1b6d5064cb6d500458a47c02aedc",
+    "zh:baae0807f44535359636749368b4acdc002ed6226c412464cce1d8d785cb1bf0",
+    "zh:c28804f35bc5347aeb94c66659e3e2e596f5b353193206f58301cea02fed8d54",
+    "zh:f181a5009cbf49a780e776d3bb6aa99f652d276d593b130c84c140841692340b",
   ]
 }

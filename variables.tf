@@ -21,5 +21,4 @@ variable "cfg_extra_vars" {
 variable "proxy_token" {
   type        = string
   description = "Proxy token to use for authentication"
-  default     = null
 }

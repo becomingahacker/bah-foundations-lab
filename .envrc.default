@@ -10,6 +10,18 @@
 export TF_VAR_cfg_file="config.yml"
 #export TF_VAR_cfg_extra_vars=""
 
+#
+# Google Cloud
+#
+export SERVICE_ACCOUNT="bah-programmatic-access@gcp-asigbahgcp-nprd-47930.iam.gserviceaccount.com"
+# BAH-programmatic-access OAuth2 Client ID
+# https://console.cloud.google.com/auth/clients?project=gcp-asigbahgcp-nprd-47930
+export OAUTH2_CLIENT_ID="344691804483-6qe8toekh0trb8a3hipistrueq8drah8.apps.googleusercontent.com"
+export TF_VAR_proxy_token=`gcloud auth print-identity-token \
+    --impersonate-service-account="$SERVICE_ACCOUNT" \
+    --audiences="$OAUTH2_CLIENT_ID" \
+    --include-email`
+
 #########
 # Secrets
 #########

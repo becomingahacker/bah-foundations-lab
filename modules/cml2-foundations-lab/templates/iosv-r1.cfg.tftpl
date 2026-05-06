@@ -93,7 +93,7 @@ router bgp 65001
   neighbor ${bgp_ipv6_peer} activate
   neighbor ${bgp_ipv6_peer} allowas-in 1
  address-family ipv6 unicast
-  network ${global_ipv6_prefix}
+  network ${cidrsubnet(global_ipv6_prefix, 8, 0)}
   neighbor ${bgp_ipv6_peer} activate
   neighbor ${bgp_ipv6_peer} allowas-in 1
 ip http server

@@ -5,22 +5,14 @@
 #
 
 terraform {
+  required_version = ">= 1.1.0"
+
   required_providers {
     cml2 = {
-      source  = "registry.terraform.io/CiscoDevNet/cml2"
-      version = "0.9.0-beta3"
-    }
-    google = {
-      source  = "hashicorp/google"
-      version = ">=6.17.0"
-    }
-    cloudinit = {
-      source  = "hashicorp/cloudinit"
-      version = ">=2.3.5"
+      source  = "CiscoDevNet/cml2"
+      version = "0.9.0"
     }
   }
-
-  required_version = ">= 1.1.0"
 
   backend "gcs" {
     bucket = "bah-cml-terraform-state"

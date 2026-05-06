@@ -65,7 +65,7 @@ resource "cml2_node" "kali" {
   lab_id         = cml2_lab.foundations_lab.id
   label          = "kali"
   nodedefinition = "kali-linux"
-  imagedefinition = "kali-linux-new"
+  imagedefinition = "kali-linux"
   ram            = 8192
   boot_disk_size = 64
   x              = 80
@@ -133,7 +133,7 @@ resource "cml2_node" "ext-conn-0" {
   x              = 680
   y              = 120
   tags           = ["external_connector"]
-  configuration  = "virbr1"
+  configuration  = "System Bridge"
 }
 
 resource "cml2_link" "l0" {

@@ -42,10 +42,10 @@ module "pod" {
   title                     = format("Becoming a Hacker Foundations - Pod %02d", count.index + 1)
   pod_number                = count.index + 1
   ip_prefix                 = cidrsubnet("10.0.0.0/8", 8, count.index + 1)
-  global_ipv4_address       = cidrhost(local.cfg.cml.global_ipv4_prefix, count.index + 1)
+  global_ipv4_address       = cidrhost(local.cfg.cml.global_ipv4_prefix, count.index + local.cfg.cml.pod_offset + 1)
   global_ipv4_netmask       = cidrnetmask(local.cfg.cml.global_ipv4_prefix)
-  global_ipv6_prefix        = cidrsubnet(local.cfg.cml.global_ipv6_prefix, 8, count.index + 1)
-  global_ipv6_address       = cidrhost(cidrsubnet(local.cfg.cml.global_ipv6_prefix, 8, 0), count.index + 1)
+  global_ipv6_prefix        = cidrsubnet(local.cfg.cml.global_ipv6_prefix, 8, count.index + local.cfg.cml.pod_offset + 1)
+  global_ipv6_address       = cidrhost(cidrsubnet(local.cfg.cml.global_ipv6_prefix, 8, 0), count.index + local.cfg.cml.pod_offset)
   global_ipv6_prefix_length = 64
   bgp_ipv6_peer             = local.cfg.cml.bgp_ipv6_peer
   bgp_ipv4_peer             = local.cfg.cml.bgp_ipv4_peer
